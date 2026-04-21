@@ -10,7 +10,7 @@ export function Hero() {
   return (
     <section
       id="hero"
-      className="relative isolate overflow-hidden pt-32 pb-16 md:pt-40 md:pb-24"
+      className="relative isolate overflow-hidden pt-32 pb-16 md:pt-40 md:pb-24 min-h-[100dvh] flex flex-col justify-center snap-start snap-always"
       style={{ background: "var(--gradient-hero)" }}
     >
       {/* Decorative shapes */}

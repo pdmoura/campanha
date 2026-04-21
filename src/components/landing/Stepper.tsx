@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useServerFn } from "@tanstack/react-start";
-import { Check, ChevronLeft, ChevronRight, Loader2, PartyPopper } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, Loader2, PartyPopper, Download, Share2 } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
-import logo from "@/assets/logo.webp";
 import { submitLead } from "@/server/leads.functions";
 import { useRecaptcha } from "@/hooks/useRecaptcha";
 
@@ -94,7 +93,7 @@ type Form = {
   website: string;
 };
 
-export function Stepper() {
+export function Stepper({ onSuccess }: { onSuccess?: () => void }) {
   const submit = useServerFn(submitLead);
   const { execute: executeRecaptcha } = useRecaptcha();
   const [step, setStep] = useState(0);
@@ -122,11 +121,53 @@ export function Stepper() {
     website: "",
   });
 
-  const set = <K extends keyof Form>(k: K, v: Form[K]) =>
-    setForm((f) => ({ ...f, [k]: v }));
+  const set = <K extends keyof Form>(k: K, v: Form[K]) => {
+    const newForm = { ...form, [k]: v };
+    setForm(newForm);
 
-  const toggle = (k: "causas" | "apoioDigital" | "mobilizacaoRua", v: string) =>
-    set(k, form[k].includes(v) ? form[k].filter((x) => x !== v) : [...form[k], v]);
+    if (k === "cep") {
+      const raw = (v as string).replace(/\D/g, "");
+      if (raw.length === 8 && raw !== form.cep.replace(/\D/g, "")) {
+        fetch(`https://viacep.com.br/ws/${raw}/json/`)
+          .then((res) => res.json())
+          .then((data) => {
+            if (!data.erro) {
+              setForm((f) => ({
+                ...f,
+                bairro: data.bairro || f.bairro,
+                cidade: data.localidade || f.cidade,
+                estado: data.uf || f.estado,
+              }));
+              setErrors((e) => {
+                const newErr = { ...e };
+                delete newErr.cep;
+                delete newErr.bairro;
+                delete newErr.cidade;
+                return newErr;
+              });
+            }
+          })
+          .catch((err) => console.error("Erro ao buscar CEP", err));
+      }
+    }
+
+    if (Object.keys(errors).length > 0) {
+      const schema = step === 0 ? step1 : step === 1 ? step2 : step3;
+      const r = schema.safeParse(newForm);
+      if (!r.success) {
+        const errs: Record<string, string> = {};
+        for (const issue of r.error.issues) errs[issue.path[0] as string] = issue.message;
+        setErrors(errs);
+      } else {
+        setErrors({});
+      }
+    }
+  };
+
+  const toggle = (k: "causas" | "apoioDigital" | "mobilizacaoRua", v: string) => {
+    const newValue = form[k].includes(v) ? form[k].filter((x) => x !== v) : [...form[k], v];
+    set(k, newValue as any);
+  };
 
   const validate = (): boolean => {
     const schema = step === 0 ? step1 : step === 1 ? step2 : step3;
@@ -174,6 +215,7 @@ export function Stepper() {
       if (res.success) {
         setDone(true);
         fireConfetti();
+        if (onSuccess) onSuccess();
         toast.success("Agora você faz parte do time! 🎉", {
           description: "Bem-vindo(a) à Rede Rodolfo PT/SC.",
           duration: 6000,
@@ -187,7 +229,7 @@ export function Stepper() {
   };
 
   return (
-    <section id="formulario" className="py-20 bg-[var(--pt-red)] relative overflow-hidden">
+    <section id="formulario" className="pt-32 pb-16 md:pt-40 md:pb-20 bg-[var(--pt-red)] relative overflow-hidden min-h-[100dvh] flex flex-col justify-center snap-start snap-always">
       <div
         className="absolute inset-0 opacity-10"
         style={{
@@ -197,36 +239,77 @@ export function Stepper() {
       />
       <div className="relative mx-auto max-w-3xl px-4">
         <div className="text-center text-white mb-10">
-          <p className="font-bold text-xs tracking-widest text-[var(--sc-yellow)] uppercase">
-            Fluxo de engajamento
-          </p>
-          <h2 className="mt-2 font-display text-4xl md:text-5xl">Entre na Rede</h2>
-          <p className="mt-2 text-white/80">3 passos rápidos. Menos de 2 minutos.</p>
+          {done ? (
+            <>
+              <h2 className="mt-2 font-display text-4xl md:text-5xl text-[var(--sc-yellow)]">
+                Agora você faz parte do time!
+              </h2>
+              <p className="mt-4 text-white/90 text-lg md:text-xl font-medium">
+                Recebemos seus dados. Em breve nossa equipe entrará em contato
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="font-bold text-xs tracking-widest text-[var(--sc-yellow)] uppercase">
+                Fluxo de engajamento
+              </p>
+              <h2 className="mt-2 font-display text-4xl md:text-5xl">Entre na Rede</h2>
+              <p className="mt-2 text-white/80">3 passos rápidos. Menos de 2 minutos.</p>
+            </>
+          )}
         </div>
 
-        <div className="rounded-3xl bg-white shadow-2xl p-6 md:p-10 border-4 border-[var(--sc-yellow)]">
+        <form onSubmit={(e) => { e.preventDefault(); if (!done) { if (step < 2) next(); else finish(); } }} className="rounded-3xl bg-white shadow-2xl p-6 md:p-10 border-4 border-[var(--sc-yellow)]">
           {done ? (
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="text-center py-10"
+              className="text-center"
             >
               <img
-                src={logo}
-                alt="Rodolfo PT/SC"
-                className="mx-auto h-32 md:h-44 w-auto mb-6 drop-shadow-xl"
-                width={360}
-                height={180}
+                src="/form-done.jpeg"
+                alt="Formulário Concluído"
+                className="mx-auto max-h-[40vh] w-auto max-w-full rounded-2xl shadow-xl object-contain mb-6"
               />
-              <div className="mx-auto h-20 w-20 rounded-full bg-[var(--sc-green)]/15 flex items-center justify-center mb-4">
-                <PartyPopper className="h-10 w-10 text-[var(--sc-green)]" />
+              <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mt-6">
+                <a
+                  href="/form-done.jpeg"
+                  download="rodolfo-futuro-deputado.jpeg"
+                  className="inline-flex items-center gap-2 rounded-full border-2 border-foreground/10 hover:border-[var(--sc-yellow)] bg-foreground/5 hover:bg-[var(--sc-yellow)]/10 px-6 py-3 font-bold text-sm transition"
+                >
+                  <Download className="h-5 w-5" /> Baixar Imagem
+                </a>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const text = "Acabei de entrar pro do Rodolfo futuro Deputado Estadual! Vem comigo!";
+                    try {
+                      if (navigator.share) {
+                        const response = await fetch('/form-done.jpeg');
+                        const blob = await response.blob();
+                        const file = new File([blob], 'rodolfo.jpeg', { type: blob.type });
+                        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                          await navigator.share({
+                            title: 'Tô com Rodolfo!',
+                            text: text,
+                            files: [file]
+                          });
+                          return;
+                        } else {
+                          await navigator.share({ title: 'Tô com Rodolfo!', text: text });
+                        }
+                      } else {
+                        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+                      }
+                    } catch (e) {
+                      console.error(e);
+                    }
+                  }}
+                  className="inline-flex items-center gap-2 rounded-full bg-[#25D366] hover:bg-[#128C7E] text-white px-6 py-3 font-bold text-sm shadow-lg transition"
+                >
+                  <Share2 className="h-5 w-5" /> Compartilhar
+                </button>
               </div>
-              <h3 className="font-display text-4xl md:text-5xl text-[var(--pt-red)]">
-                Agora você faz parte do time!
-              </h3>
-              <p className="mt-3 text-lg text-foreground/70">
-                Recebemos seus dados. Em breve você receberá novidades pelo {form.preferenciaContato || "WhatsApp"}.
-              </p>
             </motion.div>
           ) : (
             <>
@@ -324,6 +407,9 @@ export function Stepper() {
                           <select value={form.cidade} onChange={(e) => set("cidade", e.target.value)} className={inputCls}>
                             <option value="">Selecione…</option>
                             {cidades.map((c) => <option key={c} value={c}>{c}</option>)}
+                            {form.cidade && !cidades.includes(form.cidade) && form.cidade !== "Outra cidade" && (
+                              <option value={form.cidade}>{form.cidade}</option>
+                            )}
                           </select>
                         </Field>
                         <Field label="Estado">
@@ -403,6 +489,7 @@ export function Stepper() {
 
               <div className="mt-8 flex items-center justify-between gap-3">
                 <button
+                  type="button"
                   onClick={back}
                   disabled={step === 0 || loading}
                   className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold text-foreground/70 hover:text-foreground disabled:opacity-30"
@@ -412,14 +499,14 @@ export function Stepper() {
 
                 {step < 2 ? (
                   <button
-                    onClick={next}
+                    type="submit"
                     className="inline-flex items-center gap-2 rounded-full bg-[var(--pt-red)] hover:bg-[var(--pt-red-dark)] text-white px-6 py-3 text-sm font-bold shadow-lg"
                   >
                     Continuar <ChevronRight className="h-4 w-4" />
                   </button>
                 ) : (
                   <button
-                    onClick={finish}
+                    type="submit"
                     disabled={loading}
                     className="inline-flex items-center gap-2 rounded-full bg-[var(--pt-red)] hover:bg-[var(--pt-red-dark)] text-white px-7 py-3 text-base font-extrabold shadow-xl disabled:opacity-70"
                   >
@@ -430,7 +517,7 @@ export function Stepper() {
               </div>
             </>
           )}
-        </div>
+        </form>
       </div>
     </section>
   );

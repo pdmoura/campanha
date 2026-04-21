@@ -1,3 +1,5 @@
+import { useId } from "react";
+
 // Official brand SVGs (simplified, accessible).
 
 export function WhatsAppIcon({ className = "h-5 w-5" }: { className?: string }) {
@@ -20,10 +22,11 @@ export function WhatsAppIcon({ className = "h-5 w-5" }: { className?: string }) 
 }
 
 export function InstagramIcon({ className = "h-5 w-5" }: { className?: string }) {
+  const gradId = "ig-grad-" + useId().replace(/:/g, "");
   return (
     <svg viewBox="0 0 32 32" className={className} aria-hidden="true">
       <defs>
-        <radialGradient id="ig-grad" cx="30%" cy="107%" r="150%">
+        <radialGradient id={gradId} cx="30%" cy="107%" r="150%">
           <stop offset="0%" stopColor="#fdf497" />
           <stop offset="5%" stopColor="#fdf497" />
           <stop offset="45%" stopColor="#fd5949" />
@@ -31,7 +34,7 @@ export function InstagramIcon({ className = "h-5 w-5" }: { className?: string })
           <stop offset="90%" stopColor="#285AEB" />
         </radialGradient>
       </defs>
-      <rect width="32" height="32" rx="8" fill="url(#ig-grad)" />
+      <rect width="32" height="32" rx="8" fill={`url(#${gradId})`} />
       <path
         fill="none"
         stroke="#fff"

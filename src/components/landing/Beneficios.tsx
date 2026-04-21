@@ -30,7 +30,7 @@ const items = [
 
 export function Beneficios() {
   return (
-    <section id="beneficios" className="py-20 bg-gradient-to-b from-white to-[var(--sc-yellow)]/10">
+    <section id="beneficios" className="pt-32 pb-16 md:pt-40 md:pb-20 bg-gradient-to-b from-white to-[var(--sc-yellow)]/10 min-h-[100dvh] flex flex-col justify-center snap-start snap-always">
       <div className="mx-auto max-w-7xl px-4">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <p className="font-bold text-xs tracking-widest text-[var(--sc-green)] uppercase">

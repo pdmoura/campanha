@@ -118,20 +118,6 @@
   html { scroll-behavior: smooth; }
 }
 
-@font-face {
-  font-family: "Archivo Black";
-  font-style: normal;
-  font-weight: 900;
-  font-display: swap;
-  src: url("https://fonts.gstatic.com/s/archivoblack/v21/HTxqL289NzCGg4MzN6KJ7eW6CYyF_w.woff2") format("woff2");
-}
-@font-face {
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 400 800;
-  font-display: swap;
-  src: url("https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50ojIa1ZL7W0Q5nw.woff2") format("woff2");
-}
 
 .dark {
   --background: oklch(0.129 0.042 264.695);

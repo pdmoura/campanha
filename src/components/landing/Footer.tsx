@@ -8,7 +8,7 @@ import {
 
 export function Footer() {
   return (
-    <footer className="bg-foreground text-white">
+    <footer className="bg-foreground text-white snap-end">
       <div className="h-2 w-full flex">
         <div className="flex-1 bg-[var(--sc-green)]" />
         <div className="flex-1 bg-[var(--sc-yellow)]" />
@@ -16,7 +16,7 @@ export function Footer() {
       </div>
       <div className="mx-auto max-w-7xl px-4 py-12 grid md:grid-cols-3 gap-10">
         <div>
-          <img src={logo} alt="Rodolfo PT/SC" className="h-12 w-auto bg-white rounded-lg p-1.5" />
+          <img src={logo} alt="Rodolfo PT/SC" className="h-32 w-auto bg-white rounded-xl p-3" />
           <p className="mt-4 font-display text-2xl leading-tight">
             A Força do<br />Povo Catarinense
           </p>

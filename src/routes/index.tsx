@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Header } from "@/components/landing/Header";
 import { Hero } from "@/components/landing/Hero";
@@ -33,15 +34,21 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const [formDone, setFormDone] = useState(false);
+
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: "var(--font-sans)" }}>
-      <Header />
+      <Header formDone={formDone} />
       <main>
-        <Hero />
-        <JuntosNaLuta />
-        <Beneficios />
-        <Stepper />
-        <Materiais />
+        {!formDone && (
+          <>
+            <Hero />
+            <JuntosNaLuta />
+            <Beneficios />
+          </>
+        )}
+        <Stepper onSuccess={() => setFormDone(true)} />
+        {formDone && <Materiais />}
       </main>
       <Footer />
     </div>

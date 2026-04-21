@@ -11,7 +11,7 @@ const scrollTo = (id: string) => {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 };
 
-export function Header() {
+export function Header({ formDone }: { formDone?: boolean }) {
   return (
     <motion.header
       initial={{ y: -40, opacity: 0 }}
@@ -21,7 +21,10 @@ export function Header() {
     >
       <div className="mx-auto max-w-7xl px-4 h-24 md:h-32 flex items-center justify-between">
         <button
-          onClick={() => scrollTo("hero")}
+          onClick={() => {
+            if (formDone) window.scrollTo({ top: 0, behavior: "smooth" });
+            else scrollTo("hero");
+          }}
           className="flex items-center"
           aria-label="Início"
         >
@@ -35,11 +38,12 @@ export function Header() {
           />
         </button>
 
-        <nav className="hidden md:flex items-center gap-9 text-base font-semibold text-foreground/80">
-          <button onClick={() => scrollTo("luta")} className="hover:text-[var(--pt-red)]">Juntos na Luta</button>
-          <button onClick={() => scrollTo("beneficios")} className="hover:text-[var(--pt-red)]">Por que entrar</button>
-          <button onClick={() => scrollTo("materiais")} className="hover:text-[var(--pt-red)]">Materiais</button>
-        </nav>
+        {!formDone && (
+          <nav className="hidden md:flex items-center gap-9 text-base font-semibold text-foreground/80">
+            <button onClick={() => scrollTo("luta")} className="hover:text-[var(--pt-red)]">Juntos na Luta</button>
+            <button onClick={() => scrollTo("beneficios")} className="hover:text-[var(--pt-red)]">Por que entrar</button>
+          </nav>
+        )}
 
         <div className="flex items-center gap-3">
           <div className="hidden lg:flex items-center gap-2">
@@ -57,13 +61,23 @@ export function Header() {
             </a>
           </div>
 
-          <button
-            onClick={() => scrollTo("formulario")}
-            className="inline-flex items-center gap-2 rounded-full bg-[var(--pt-red)] hover:bg-[var(--pt-red-dark)] text-white px-5 py-2.5 text-base font-bold shadow-lg shadow-[var(--pt-red)]/30 transition"
-          >
-            <span className="hidden sm:inline">Quero participar</span>
-            <span className="sm:hidden">Entrar</span>
-          </button>
+          {!formDone ? (
+            <button
+              onClick={() => scrollTo("formulario")}
+              className="inline-flex items-center gap-2 rounded-full bg-[var(--pt-red)] hover:bg-[var(--pt-red-dark)] text-white px-5 py-2.5 text-base font-bold shadow-lg shadow-[var(--pt-red)]/30 transition"
+            >
+              <span className="hidden sm:inline">Quero participar</span>
+              <span className="sm:hidden">Entrar</span>
+            </button>
+          ) : (
+            <button
+              onClick={() => window.location.reload()}
+              className="inline-flex items-center gap-2 rounded-full bg-foreground hover:bg-foreground/80 text-white px-5 py-2.5 text-base font-bold shadow-md transition"
+            >
+              <span className="hidden sm:inline">Voltar ao início</span>
+              <span className="sm:hidden">Voltar</span>
+            </button>
+          )}
         </div>
       </div>
     </motion.header>
