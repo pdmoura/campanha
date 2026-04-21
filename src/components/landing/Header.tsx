@@ -40,6 +40,7 @@ export function Header({ formDone }: { formDone?: boolean }) {
 
         {!formDone && (
           <nav className="hidden md:flex items-center gap-9 text-base font-semibold text-foreground/80">
+            <button onClick={() => scrollTo("sobre")} className="hover:text-[var(--pt-red)]">Sobre</button>
             <button onClick={() => scrollTo("luta")} className="hover:text-[var(--pt-red)]">Juntos na Luta</button>
             <button onClick={() => scrollTo("beneficios")} className="hover:text-[var(--pt-red)]">Por que entrar</button>
           </nav>

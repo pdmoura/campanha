@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { useServerFn } from "@tanstack/react-start";
 import { Check, ChevronLeft, ChevronRight, Loader2, PartyPopper, Download, Share2 } from "lucide-react";
@@ -25,7 +26,22 @@ const cidades = [
   "Criciúma", "Jaraguá do Sul", "Palhoça", "Balneário Camboriú", "Brusque", "Tubarão",
   "Concórdia", "São Bento do Sul", "Caçador", "Camboriú", "Navegantes", "Outra cidade",
 ];
-const causas = ["Educação", "Saúde", "Trabalho", "Moradia", "Meio Ambiente", "Direitos Humanos"];
+const causas = [
+  "📚 Educação",
+  "🌱 Meio Ambiente",
+  "🏥 Saúde",
+  "✊ Direitos Humanos",
+  "🛡️ Segurança",
+  "🌟 Juventude",
+  "🎭 Cultura",
+  "♀️ Feminismo",
+  "💼 Trabalho",
+  "🏠 Moradia",
+  "🏳️‍🌈 LGBTQIA+",
+  "✨ Igualdade Racial",
+  "🚜 Agricultura e Pecuária",
+  "🐾 Direito dos Animais",
+];
 const apoioDigitalOpts = [
   "Compartilhar conteúdo nas redes",
   "Criar artes e vídeos",
@@ -229,7 +245,7 @@ export function Stepper({ onSuccess }: { onSuccess?: () => void }) {
   };
 
   return (
-    <section id="formulario" className="pt-32 pb-16 md:pt-40 md:pb-20 bg-[var(--pt-red)] relative overflow-hidden min-h-[100dvh] flex flex-col justify-center snap-start snap-always">
+    <section id="formulario" className="pt-28 pb-8 md:pt-36 md:pb-12 bg-[var(--pt-red)] relative overflow-hidden min-h-[100dvh] flex flex-col justify-center snap-start snap-always">
       <div
         className="absolute inset-0 opacity-10"
         style={{
@@ -237,8 +253,8 @@ export function Stepper({ onSuccess }: { onSuccess?: () => void }) {
             "repeating-linear-gradient(45deg, var(--sc-yellow), var(--sc-yellow) 10px, transparent 10px, transparent 30px)",
         }}
       />
-      <div className="relative mx-auto max-w-3xl px-4">
-        <div className="text-center text-white mb-10">
+      <div className="relative mx-auto max-w-5xl px-4">
+        <div className="text-center text-white mb-6">
           {done ? (
             <>
               <h2 className="mt-2 font-display text-4xl md:text-5xl text-[var(--sc-yellow)]">
@@ -427,11 +443,11 @@ export function Stepper({ onSuccess }: { onSuccess?: () => void }) {
                         </div>
                       </Field>
                       <Field label="Causas que te mobilizam" error={errors.causas}>
-                        <div className="flex flex-wrap gap-2">
-                          {causas.map((i) => (
-                            <Chip key={i} active={form.causas.includes(i)} onClick={() => toggle("causas", i)}>{i}</Chip>
-                          ))}
-                        </div>
+                        <CausasSelect
+                          options={causas}
+                          selected={form.causas}
+                          onToggle={(v) => toggle("causas", v)}
+                        />
                       </Field>
                     </div>
                   )}
@@ -551,6 +567,95 @@ function Chip({ children, active, onClick }: { children: React.ReactNode; active
     </button>
   );
 }
+
+function CausasSelect({ options, selected, onToggle }: { options: string[]; selected: string[]; onToggle: (v: string) => void }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="w-full rounded-xl border-2 border-foreground/10 bg-white px-4 py-3 text-left text-sm font-medium transition flex items-center justify-between gap-2 hover:border-[var(--pt-red)]"
+      >
+        {selected.length === 0 ? (
+          <span className="text-foreground/40">Selecione as causas…</span>
+        ) : (
+          <span className="flex flex-wrap gap-1.5">
+            {selected.map((s) => (
+              <span key={s} className="inline-flex items-center gap-1 bg-[var(--sc-green)]/10 text-[var(--sc-green)] rounded-full px-2.5 py-0.5 text-xs font-bold">
+                {s}
+              </span>
+            ))}
+          </span>
+        )}
+        <ChevronRight className="h-4 w-4 shrink-0 text-foreground/40" />
+      </button>
+
+      {open && typeof document !== "undefined" && createPortal(
+          <div
+            className="fixed inset-0 z-[999] flex items-center justify-center p-4"
+            style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }}
+            onClick={() => setOpen(false)}
+          >
+            <div
+              className="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-6 flex flex-col gap-5"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-display text-xl text-[var(--pt-red)]">Causas que te mobilizam</h3>
+                  <p className="text-xs text-foreground/50 mt-0.5">Selecione quantas quiser</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  className="text-foreground/40 hover:text-foreground transition text-2xl leading-none"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                {options.map((o) => {
+                  const active = selected.includes(o);
+                  return (
+                    <button
+                      key={o}
+                      type="button"
+                      onClick={() => onToggle(o)}
+                      className={`flex items-center gap-2.5 p-3 rounded-xl border-2 text-left text-sm font-semibold transition ${
+                        active
+                          ? "border-[var(--sc-green)] bg-[var(--sc-green)]/8 text-[var(--sc-green)]"
+                          : "border-foreground/10 hover:border-[var(--sc-yellow)] hover:bg-[var(--sc-yellow)]/5"
+                      }`}
+                    >
+                      <span className={`h-4 w-4 rounded flex items-center justify-center border-2 shrink-0 ${
+                        active ? "bg-[var(--sc-green)] border-[var(--sc-green)] text-white" : "border-foreground/25"
+                      }`}>
+                        {active && <Check className="h-3 w-3" />}
+                      </span>
+                      {o}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                className="mt-1 w-full rounded-full bg-[var(--pt-red)] hover:bg-[var(--pt-red-dark)] text-white py-3 font-bold text-sm shadow-lg transition"
+              >
+                Confirmar {selected.length > 0 ? `(${selected.length} selecionadas)` : ""}
+              </button>
+            </div>
+          </div>,
+          document.body
+        )}
+    </>
+  );
+}
+
 
 function CheckOption({ children, active, onClick }: { children: React.ReactNode; active: boolean; onClick: () => void }) {
   return (

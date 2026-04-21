@@ -57,7 +57,7 @@ export function Hero() {
             transition={{ duration: 0.7, delay: 0.1 }}
             className="mt-5 font-display text-5xl sm:text-6xl md:text-7xl leading-[0.95] tracking-tight"
           >
-            A FORÇA DO
+            A VOZ DO
             <span className="block text-[var(--sc-yellow)] drop-shadow-[0_4px_0_rgba(0,0,0,0.15)]">
               POVO CATARINENSE
             </span>

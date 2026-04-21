@@ -164,4 +164,19 @@
     color: var(--color-foreground);
     font-family: var(--font-sans);
   }
+
+  button:not(:disabled), a[href] {
+    cursor: pointer !important;
+  }
+}
+
+.grecaptcha-badge {
+  transform: scale(0.85);
+  transform-origin: bottom right;
+  bottom: 12px !important;
+  right: -158px !important;
+}
+
+.grecaptcha-badge:hover {
+  right: -10px !important;
 }

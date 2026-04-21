@@ -15,7 +15,7 @@ const leadSchema = z.object({
   bairro: z.string().trim().min(2).max(80),
   estado: z.string().trim().length(2).default("SC"),
   filiacaoPT: z.enum(["Sim", "Não", "Em processo"]),
-  causas: z.array(z.string().min(2).max(40)).min(1).max(10),
+  causas: z.array(z.string().min(2).max(40)).min(1).max(14),
   apoioDigital: z.array(z.string().min(2).max(60)).max(10).default([]),
   mobilizacaoRua: z.array(z.string().min(2).max(60)).max(10).default([]),
   optIn: z.boolean(),

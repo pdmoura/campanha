@@ -2,11 +2,13 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Header } from "@/components/landing/Header";
 import { Hero } from "@/components/landing/Hero";
+import { Sobre } from "@/components/landing/Sobre";
 import { JuntosNaLuta } from "@/components/landing/JuntosNaLuta";
 import { Beneficios } from "@/components/landing/Beneficios";
 import { Stepper } from "@/components/landing/Stepper";
 import { Materiais } from "@/components/landing/Materiais";
 import { Footer } from "@/components/landing/Footer";
+import { GoToTop } from "@/components/landing/GoToTop";
 import ogImage from "@/assets/capa1.webp";
 
 export const Route = createFileRoute("/")({
@@ -43,6 +45,7 @@ function Index() {
         {!formDone && (
           <>
             <Hero />
+            <Sobre />
             <JuntosNaLuta />
             <Beneficios />
           </>
@@ -51,6 +54,7 @@ function Index() {
         {formDone && <Materiais />}
       </main>
       <Footer />
+      <GoToTop />
     </div>
   );
 }
