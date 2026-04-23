@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { ArrowDown } from "lucide-react";
-import rodolfo from "@/assets/rodolfo1.webp";
+import rodolfo from "@/assets/rodolfo-lula.webp";
 
 const scrollTo = (id: string) => {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -131,7 +131,7 @@ export function Hero() {
               <motion.img
                 src={rodolfo}
                 alt="Rodolfo, pré-candidato a Deputado Estadual"
-                className="relative h-full w-full object-cover object-top"
+                className="relative h-full w-full object-cover object-top rounded-b-[2rem]"
                 width={760}
                 height={950}
                 fetchPriority="high"

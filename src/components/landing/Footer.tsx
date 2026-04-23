@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import logo from "@/assets/logo.webp";
 import {
   InstagramIcon,
@@ -46,6 +47,12 @@ export function Footer() {
             exclusivamente para comunicação da pré-campanha. Você pode solicitar
             remoção a qualquer momento.
           </p>
+          <Link
+            to="/privacidade"
+            className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-[var(--sc-yellow)] hover:underline transition"
+          >
+            Política de Privacidade &amp; LGPD →
+          </Link>
         </div>
       </div>
 

@@ -9,6 +9,7 @@ import { Stepper } from "@/components/landing/Stepper";
 import { Materiais } from "@/components/landing/Materiais";
 import { Footer } from "@/components/landing/Footer";
 import { GoToTop } from "@/components/landing/GoToTop";
+import { CookieBanner } from "@/components/landing/CookieBanner";
 import ogImage from "@/assets/capa1.webp";
 
 export const Route = createFileRoute("/")({
@@ -55,6 +56,7 @@ function Index() {
       </main>
       <Footer />
       <GoToTop />
+      <CookieBanner />
     </div>
   );
 }

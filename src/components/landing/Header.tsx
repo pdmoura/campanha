@@ -68,7 +68,7 @@ export function Header({ formDone }: { formDone?: boolean }) {
               className="inline-flex items-center gap-2 rounded-full bg-[var(--pt-red)] hover:bg-[var(--pt-red-dark)] text-white px-5 py-2.5 text-base font-bold shadow-lg shadow-[var(--pt-red)]/30 transition"
             >
               <span className="hidden sm:inline">Quero participar</span>
-              <span className="sm:hidden">Entrar</span>
+              <span className="sm:hidden">Inscreva-se</span>
             </button>
           ) : (
             <button
