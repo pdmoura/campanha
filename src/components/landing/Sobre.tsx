@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
+import candidatoFamily from "@/assets/candidato-family.jpeg";
 
 export function Sobre() {
   return (
-    <section id="sobre" className="pt-32 pb-16 md:pt-40 md:pb-24 min-h-[100dvh] flex flex-col justify-center bg-foreground/5 snap-start snap-always">
+    <section id="sobre" className="pt-32 pb-16 md:pt-40 md:pb-24 min-h-dvh flex flex-col justify-center bg-foreground/5 snap-start snap-always">
       <div className="mx-auto max-w-7xl px-4 w-full">
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-center">
           <motion.div 
@@ -11,9 +12,9 @@ export function Sobre() {
             viewport={{ once: true }}
             className="w-full lg:w-5/12"
           >
-            <div className="rounded-3xl overflow-hidden shadow-2xl border-4 border-white relative aspect-square lg:aspect-[4/5] bg-white">
+            <div className="rounded-3xl overflow-hidden shadow-2xl border-4 border-white relative aspect-square lg:aspect-4/5 bg-white">
               <img 
-                src="/candidato-family.jpeg" 
+                src={candidatoFamily} 
                 alt="Rodolfo de Ramos e Família" 
                 className="absolute inset-0 w-full h-full object-cover"
                 loading="lazy"
@@ -28,10 +29,10 @@ export function Sobre() {
             className="w-full lg:w-7/12 space-y-4 lg:space-y-6"
           >
             <div>
-              <p className="font-bold text-xs tracking-widest text-[var(--sc-green)] uppercase mb-1 lg:mb-2">
+              <p className="font-bold text-xs tracking-widest text-sc-green uppercase mb-1 lg:mb-2">
                 Conheça a história
               </p>
-              <h2 className="font-display text-3xl md:text-4xl lg:text-5xl text-[var(--pt-red)]">
+              <h2 className="font-display text-3xl md:text-4xl lg:text-5xl text-pt-red">
                 Sobre o Rodolfo
               </h2>
             </div>

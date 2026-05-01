@@ -245,7 +245,7 @@ export function Stepper({ onSuccess }: { onSuccess?: () => void }) {
   };
 
   return (
-    <section id="formulario" className="pt-28 pb-8 md:pt-36 md:pb-12 bg-[var(--pt-red)] relative overflow-hidden min-h-[100dvh] flex flex-col justify-center snap-start snap-always">
+    <section id="formulario" className="pt-28 pb-8 md:pt-36 md:pb-12 bg-pt-red relative overflow-hidden min-h-dvh flex flex-col justify-center snap-start snap-always">
       <div
         className="absolute inset-0 opacity-10"
         style={{
@@ -257,7 +257,7 @@ export function Stepper({ onSuccess }: { onSuccess?: () => void }) {
         <div className="text-center text-white mb-6">
           {done ? (
             <>
-              <h2 className="mt-2 font-display text-4xl md:text-5xl text-[var(--sc-yellow)]">
+              <h2 className="mt-2 font-display text-4xl md:text-5xl text-sc-yellow">
                 Agora você faz parte do time!
               </h2>
               <p className="mt-4 text-white/90 text-lg md:text-xl font-medium">
@@ -266,7 +266,7 @@ export function Stepper({ onSuccess }: { onSuccess?: () => void }) {
             </>
           ) : (
             <>
-              <p className="font-bold text-xs tracking-widest text-[var(--sc-yellow)] uppercase">
+              <p className="font-bold text-xs tracking-widest text-sc-yellow uppercase">
                 Fluxo de engajamento
               </p>
               <h2 className="mt-2 font-display text-4xl md:text-5xl">Entre na Rede</h2>
@@ -275,7 +275,7 @@ export function Stepper({ onSuccess }: { onSuccess?: () => void }) {
           )}
         </div>
 
-        <form onSubmit={(e) => { e.preventDefault(); if (!done) { if (step < 2) next(); else finish(); } }} className="rounded-3xl bg-white shadow-2xl p-6 md:p-10 border-4 border-[var(--sc-yellow)]">
+        <form onSubmit={(e) => { e.preventDefault(); if (!done) { if (step < 2) next(); else finish(); } }} className="rounded-3xl bg-white shadow-2xl p-6 md:p-10 border-4 border-sc-yellow">
           {done ? (
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
@@ -283,15 +283,15 @@ export function Stepper({ onSuccess }: { onSuccess?: () => void }) {
               className="text-center"
             >
               <img
-                src="/form-done.jpeg"
+                src="/form-done.webp"
                 alt="Formulário Concluído"
                 className="mx-auto max-h-[40vh] w-auto max-w-full rounded-2xl shadow-xl object-contain mb-6"
               />
               <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mt-6">
                 <a
-                  href="/form-done.jpeg"
+                  href="/form-done.webp"
                   download="rodolfo-futuro-deputado.jpeg"
-                  className="inline-flex items-center gap-2 rounded-full border-2 border-foreground/10 hover:border-[var(--sc-yellow)] bg-foreground/5 hover:bg-[var(--sc-yellow)]/10 px-6 py-3 font-bold text-sm transition"
+                  className="inline-flex items-center gap-2 rounded-full border-2 border-foreground/10 hover:border-sc-yellow bg-foreground/5 hover:bg-sc-yellow/10 px-6 py-3 font-bold text-sm transition"
                 >
                   <Download className="h-5 w-5" /> Baixar Imagem
                 </a>
@@ -301,7 +301,7 @@ export function Stepper({ onSuccess }: { onSuccess?: () => void }) {
                     const text = "Acabei de entrar pro do Rodolfo futuro Deputado Estadual! Vem comigo!";
                     try {
                       if (navigator.share) {
-                        const response = await fetch('/form-done.jpeg');
+                        const response = await fetch('/form-done.webp');
                         const blob = await response.blob();
                         const file = new File([blob], 'rodolfo.jpeg', { type: blob.type });
                         if (navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -369,7 +369,7 @@ export function Stepper({ onSuccess }: { onSuccess?: () => void }) {
                           />
                         </label>
                       </div>
-                      <h3 className="font-display text-2xl text-[var(--pt-red)]">1. Identificação</h3>
+                      <h3 className="font-display text-2xl text-pt-red">1. Identificação</h3>
                       <Field label="Nome completo" error={errors.nome}>
                         <input value={form.nome} onChange={(e) => set("nome", e.target.value)} className={inputCls} placeholder="Seu nome completo" />
                       </Field>
@@ -414,7 +414,7 @@ export function Stepper({ onSuccess }: { onSuccess?: () => void }) {
 
                   {step === 1 && (
                     <div className="space-y-4">
-                      <h3 className="font-display text-2xl text-[var(--pt-red)]">2. Localização & Causas</h3>
+                      <h3 className="font-display text-2xl text-pt-red">2. Localização & Causas</h3>
                       <div className="grid sm:grid-cols-3 gap-4">
                         <Field label="CEP" error={errors.cep}>
                           <input inputMode="numeric" value={form.cep} onChange={(e) => set("cep", maskCep(e.target.value))} className={inputCls} placeholder="00000-000" />
@@ -454,7 +454,7 @@ export function Stepper({ onSuccess }: { onSuccess?: () => void }) {
 
                   {step === 2 && (
                     <div className="space-y-5">
-                      <h3 className="font-display text-2xl text-[var(--pt-red)]">3. Compromisso</h3>
+                      <h3 className="font-display text-2xl text-pt-red">3. Compromisso</h3>
 
                       <Field label="Apoio digital">
                         <div className="grid sm:grid-cols-2 gap-2">
@@ -472,12 +472,12 @@ export function Stepper({ onSuccess }: { onSuccess?: () => void }) {
                         </div>
                       </Field>
 
-                      <label className="flex items-start gap-3 p-4 rounded-xl bg-[var(--sc-yellow)]/15 border border-[var(--sc-yellow)] cursor-pointer">
+                      <label className="flex items-start gap-3 p-4 rounded-xl bg-sc-yellow/15 border border-sc-yellow cursor-pointer">
                         <input
                           type="checkbox"
                           checked={form.optIn}
                           onChange={(e) => set("optIn", e.target.checked)}
-                          className="mt-1 h-5 w-5 accent-[var(--pt-red)]"
+                          className="mt-1 h-5 w-5 accent-pt-red"
                         />
                         <span className="text-sm text-foreground/80">
                           <strong>Quero receber notícias da campanha</strong> por WhatsApp,
@@ -494,7 +494,7 @@ export function Stepper({ onSuccess }: { onSuccess?: () => void }) {
                       </p>
 
                       {serverError && (
-                        <p className="text-sm font-semibold text-[var(--pt-red)] bg-[var(--pt-red)]/5 p-3 rounded-lg">
+                        <p className="text-sm font-semibold text-pt-red bg-pt-red/5 p-3 rounded-lg">
                           {serverError}
                         </p>
                       )}
@@ -516,7 +516,7 @@ export function Stepper({ onSuccess }: { onSuccess?: () => void }) {
                 {step < 2 ? (
                   <button
                     type="submit"
-                    className="inline-flex items-center gap-2 rounded-full bg-[var(--pt-red)] hover:bg-[var(--pt-red-dark)] text-white px-6 py-3 text-sm font-bold shadow-lg"
+                    className="inline-flex items-center gap-2 rounded-full bg-pt-red hover:bg-pt-red-dark text-white px-6 py-3 text-sm font-bold shadow-lg"
                   >
                     Continuar <ChevronRight className="h-4 w-4" />
                   </button>
@@ -524,7 +524,7 @@ export function Stepper({ onSuccess }: { onSuccess?: () => void }) {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="inline-flex items-center gap-2 rounded-full bg-[var(--pt-red)] hover:bg-[var(--pt-red-dark)] text-white px-7 py-3 text-base font-extrabold shadow-xl disabled:opacity-70"
+                    className="inline-flex items-center gap-2 rounded-full bg-pt-red hover:bg-pt-red-dark text-white px-7 py-3 text-base font-extrabold shadow-xl disabled:opacity-70"
                   >
                     {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : null}
                     COMEÇAR AGORA
@@ -547,7 +547,7 @@ function Field({ label, error, children }: { label: string; error?: string; chil
     <label className="block">
       <span className="block text-xs font-bold uppercase tracking-wider text-foreground/70 mb-1.5">{label}</span>
       {children}
-      {error && <span className="block mt-1 text-xs font-semibold text-[var(--pt-red)]">{error}</span>}
+      {error && <span className="block mt-1 text-xs font-semibold text-pt-red">{error}</span>}
     </label>
   );
 }
@@ -559,8 +559,8 @@ function Chip({ children, active, onClick }: { children: React.ReactNode; active
       onClick={onClick}
       className={`px-4 py-2 rounded-full text-sm font-semibold border-2 transition ${
         active
-          ? "bg-[var(--sc-green)] border-[var(--sc-green)] text-white"
-          : "border-foreground/15 hover:border-[var(--sc-yellow)] hover:bg-[var(--sc-yellow)]/10"
+          ? "bg-sc-green border-sc-green text-white"
+          : "border-foreground/15 hover:border-sc-yellow hover:bg-sc-yellow/10"
       }`}
     >
       {children}
@@ -576,14 +576,14 @@ function CausasSelect({ options, selected, onToggle }: { options: string[]; sele
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="w-full rounded-xl border-2 border-foreground/10 bg-white px-4 py-3 text-left text-sm font-medium transition flex items-center justify-between gap-2 hover:border-[var(--pt-red)]"
+        className="w-full rounded-xl border-2 border-foreground/10 bg-white px-4 py-3 text-left text-sm font-medium transition flex items-center justify-between gap-2 hover:border-pt-red"
       >
         {selected.length === 0 ? (
           <span className="text-foreground/40">Selecione as causas…</span>
         ) : (
           <span className="flex flex-wrap gap-1.5">
             {selected.map((s) => (
-              <span key={s} className="inline-flex items-center gap-1 bg-[var(--sc-green)]/10 text-[var(--sc-green)] rounded-full px-2.5 py-0.5 text-xs font-bold">
+              <span key={s} className="inline-flex items-center gap-1 bg-sc-green/10 text-sc-green rounded-full px-2.5 py-0.5 text-xs font-bold">
                 {s}
               </span>
             ))}
@@ -594,7 +594,7 @@ function CausasSelect({ options, selected, onToggle }: { options: string[]; sele
 
       {open && typeof document !== "undefined" && createPortal(
           <div
-            className="fixed inset-0 z-[999] flex items-center justify-center p-4"
+            className="fixed inset-0 z-999 flex items-center justify-center p-4"
             style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(4px)" }}
             onClick={() => setOpen(false)}
           >
@@ -604,7 +604,7 @@ function CausasSelect({ options, selected, onToggle }: { options: string[]; sele
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-display text-xl text-[var(--pt-red)]">Causas que te mobilizam</h3>
+                  <h3 className="font-display text-xl text-pt-red">Causas que te mobilizam</h3>
                   <p className="text-xs text-foreground/50 mt-0.5">Selecione quantas quiser</p>
                 </div>
                 <button
@@ -626,12 +626,12 @@ function CausasSelect({ options, selected, onToggle }: { options: string[]; sele
                       onClick={() => onToggle(o)}
                       className={`flex items-center gap-2.5 p-3 rounded-xl border-2 text-left text-sm font-semibold transition ${
                         active
-                          ? "border-[var(--sc-green)] bg-[var(--sc-green)]/8 text-[var(--sc-green)]"
-                          : "border-foreground/10 hover:border-[var(--sc-yellow)] hover:bg-[var(--sc-yellow)]/5"
+                          ? "border-sc-green bg-sc-green/8 text-sc-green"
+                          : "border-foreground/10 hover:border-sc-yellow hover:bg-sc-yellow/5"
                       }`}
                     >
                       <span className={`h-4 w-4 rounded flex items-center justify-center border-2 shrink-0 ${
-                        active ? "bg-[var(--sc-green)] border-[var(--sc-green)] text-white" : "border-foreground/25"
+                        active ? "bg-sc-green border-sc-green text-white" : "border-foreground/25"
                       }`}>
                         {active && <Check className="h-3 w-3" />}
                       </span>
@@ -644,7 +644,7 @@ function CausasSelect({ options, selected, onToggle }: { options: string[]; sele
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="mt-1 w-full rounded-full bg-[var(--pt-red)] hover:bg-[var(--pt-red-dark)] text-white py-3 font-bold text-sm shadow-lg transition"
+                className="mt-1 w-full rounded-full bg-pt-red hover:bg-pt-red-dark text-white py-3 font-bold text-sm shadow-lg transition"
               >
                 Confirmar {selected.length > 0 ? `(${selected.length} selecionadas)` : ""}
               </button>
@@ -663,12 +663,12 @@ function CheckOption({ children, active, onClick }: { children: React.ReactNode;
       type="button"
       onClick={onClick}
       className={`flex items-center gap-3 p-3 rounded-xl border-2 text-left transition ${
-        active ? "border-[var(--pt-red)] bg-[var(--pt-red)]/5" : "border-foreground/10 hover:border-[var(--sc-yellow)]"
+        active ? "border-pt-red bg-pt-red/5" : "border-foreground/10 hover:border-sc-yellow"
       }`}
     >
       <span
         className={`h-5 w-5 rounded-md flex items-center justify-center border-2 shrink-0 ${
-          active ? "bg-[var(--pt-red)] border-[var(--pt-red)] text-white" : "border-foreground/30"
+          active ? "bg-pt-red border-pt-red text-white" : "border-foreground/30"
         }`}
       >
         {active && <Check className="h-3 w-3" />}

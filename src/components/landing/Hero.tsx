@@ -10,7 +10,7 @@ export function Hero() {
   return (
     <section
       id="hero"
-      className="relative isolate overflow-hidden pt-32 pb-16 md:pt-40 md:pb-24 min-h-[100dvh] flex flex-col justify-center snap-start snap-always"
+      className="relative isolate overflow-hidden px-4 pt-28 pb-12 sm:pt-32 sm:pb-16 md:pt-40 md:pb-24 min-h-[100dvh] flex flex-col justify-center snap-start snap-always"
       style={{ background: "var(--gradient-hero)" }}
     >
       {/* Decorative shapes */}
@@ -39,7 +39,7 @@ export function Hero() {
         <rect width="100%" height="100%" fill="url(#grid)" />
       </svg>
 
-      <div className="relative mx-auto max-w-7xl px-4 grid md:grid-cols-2 gap-10 items-center">
+      <div className="relative mx-auto max-w-7xl w-full grid md:grid-cols-2 gap-8 md:gap-10 items-center">
         <div className="text-white">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -55,7 +55,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
-            className="mt-5 font-display text-5xl sm:text-6xl md:text-7xl leading-[0.95] tracking-tight"
+            className="mt-5 font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[0.95] tracking-tight"
           >
             A VOZ DO
             <span className="block text-[var(--sc-yellow)] drop-shadow-[0_4px_0_rgba(0,0,0,0.15)]">
@@ -107,7 +107,7 @@ export function Hero() {
           initial={{ opacity: 0, scale: 0.9, x: 30 }}
           animate={{ opacity: 1, scale: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="relative mx-auto"
+          className="relative mx-auto hidden sm:block"
         >
           <div className="absolute inset-0 -m-6 rounded-[3rem] bg-gradient-to-br from-[var(--sc-yellow)] via-white/30 to-[var(--sc-green)] blur-2xl opacity-60" />
           <div
@@ -118,7 +118,7 @@ export function Hero() {
               boxShadow: "var(--shadow-glow)",
             }}
           >
-            <div className="bg-gradient-to-b from-[var(--pt-red)] to-[var(--pt-red-dark)] aspect-[4/5] w-[280px] sm:w-[340px] md:w-[380px] flex items-end justify-center relative overflow-hidden">
+            <div className="bg-gradient-to-b from-[var(--pt-red)] to-[var(--pt-red-dark)] aspect-[4/5] w-[220px] sm:w-[280px] md:w-[320px] lg:w-[380px] flex items-end justify-center relative overflow-hidden">
               {/* Decorative dots */}
               <svg className="absolute inset-0 w-full h-full opacity-20" aria-hidden>
                 <defs>
