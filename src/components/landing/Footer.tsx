@@ -34,7 +34,7 @@ export function Footer() {
             <a href="https://www.instagram.com/rodolfo_de_ramos/" target="_blank" rel="noreferrer" aria-label="Instagram" className="hover:scale-110 transition"><InstagramIcon className="h-9 w-9" /></a>
             <a href="https://www.facebook.com/rodolfo.deramos.3?locale=pt_BR" target="_blank" rel="noreferrer" aria-label="Facebook" className="hover:scale-110 transition"><FacebookIcon className="h-9 w-9" /></a>
             <a href="https://www.tiktok.com/@rodolfolulista" target="_blank" rel="noreferrer" aria-label="TikTok" className="hover:scale-110 transition"><TikTokIcon className="h-9 w-9" /></a>
-            <a href="https://wa.me/" target="_blank" rel="noreferrer" aria-label="WhatsApp" className="hover:scale-110 transition"><WhatsAppIcon className="h-9 w-9" /></a>
+            <a href="https://chat.whatsapp.com/IZtzCZHX68FK6OI2pXFftH" target="_blank" rel="noreferrer" aria-label="WhatsApp" className="hover:scale-110 transition"><WhatsAppIcon className="h-9 w-9" /></a>
           </div>
         </div>
 

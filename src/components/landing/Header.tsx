@@ -57,7 +57,7 @@ export function Header({ formDone }: { formDone?: boolean }) {
             <a href="https://www.tiktok.com/@rodolfolulista" target="_blank" rel="noreferrer" aria-label="TikTok" className="hover:scale-110 transition">
               <TikTokIcon className="h-7 w-7" />
             </a>
-            <a href="https://wa.me/" target="_blank" rel="noreferrer" aria-label="WhatsApp" className="hover:scale-110 transition">
+            <a href="https://chat.whatsapp.com/IZtzCZHX68FK6OI2pXFftH" target="_blank" rel="noreferrer" aria-label="WhatsApp" className="hover:scale-110 transition">
               <WhatsAppIcon className="h-7 w-7" />
             </a>
           </div>

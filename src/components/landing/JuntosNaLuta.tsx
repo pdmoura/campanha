@@ -5,10 +5,8 @@ import useEmblaCarousel from "embla-carousel-react";
 import {
   ChevronLeft,
   ChevronRight,
-  MapPin,
   Newspaper,
   X,
-  ZoomIn,
 } from "lucide-react";
 
 import img1 from "@/assets/1.webp";
@@ -20,12 +18,15 @@ import capa2 from "@/assets/capa2.webp";
 import capa3 from "@/assets/capa3.webp";
 import capa4 from "@/assets/capa4.webp";
 import capa5 from "@/assets/capa5.webp";
+import assembleia1 from "@/assets/assembleia1.webp";
+import assembleia2 from "@/assets/assembleia2.webp";
+import assembleia3 from "@/assets/assembleia3.webp";
 
 /* ── Types ───────────────────────────────────────────────────────── */
 
 type ModalContent =
   | { type: "image"; src: string; city: string }
-  | { type: "post" };
+  | { type: "post"; postId: "campo-cidade" | "assembleia" };
 
 type LutaCard = {
   city: string;
@@ -81,7 +82,34 @@ const featuredCard: LutaCard = {
     "Card especial com detalhes da agenda construída junto aos trabalhadores rurais.",
 };
 
+const assembleiaCard: LutaCard = {
+  city: "Joinville",
+  image: assembleia1,
+  eyebrow: "Trabalhadores dos Correios",
+  title: "Assembleia dos Correios",
+  description:
+    "Rodolfo esteve presente apoiando a luta dos trabalhadores dos Correios de Joinville e região.",
+};
+
 const postImages = [img1, img2, img3, img4];
+const assembleiaImages = [assembleia1, assembleia2, assembleia3];
+
+type FeaturedCard = LutaCard & { postId: "campo-cidade" | "assembleia"; label: string; subtitle: string };
+
+const featuredCards: FeaturedCard[] = [
+  {
+    ...featuredCard,
+    postId: "campo-cidade",
+    label: "Entre o Campo e a Cidade",
+    subtitle: "Clique para ver a galeria e os detalhes da feira estadual e do seminário em Joinville.",
+  },
+  {
+    ...assembleiaCard,
+    postId: "assembleia",
+    label: "Assembleia dos Correios",
+    subtitle: "Apoiando a luta dos trabalhadores dos Correios de Joinville e região. Clique para ver mais.",
+  },
+];
 
 /* ── Stagger animation variants ──────────────────────────────────── */
 
@@ -106,14 +134,14 @@ const cardVariants = {
 export function JuntosNaLuta() {
   const [modalContent, setModalContent] = useState<ModalContent | null>(null);
 
-  /* Embla carousel for the cards */
-  const [carouselRef, carouselApi] = useEmblaCarousel({
+  /* Embla carousel for the featured cards */
+  const [featuredRef, featuredApi] = useEmblaCarousel({
     loop: true,
     align: "start",
     slidesToScroll: 1,
   });
-  const scrollPrev = useCallback(() => carouselApi?.scrollPrev(), [carouselApi]);
-  const scrollNext = useCallback(() => carouselApi?.scrollNext(), [carouselApi]);
+  const featuredPrev = useCallback(() => featuredApi?.scrollPrev(), [featuredApi]);
+  const featuredNext = useCallback(() => featuredApi?.scrollNext(), [featuredApi]);
 
   /* Lock body scroll when modal is open */
   useEffect(() => {
@@ -133,14 +161,10 @@ export function JuntosNaLuta() {
     };
   }, [modalContent]);
 
-  const openImage = (card: LutaCard) => {
-    setModalContent({ type: "image", src: card.image, city: card.city });
-  };
-
   return (
     <section
       id="luta"
-      className="relative isolate flex min-h-dvh snap-start snap-always flex-col justify-center overflow-hidden bg-white pt-32 pb-24 md:pt-40 md:pb-32"
+      className="relative isolate flex h-dvh snap-start snap-always flex-col overflow-hidden bg-white pt-28 pb-8 sm:pt-32 sm:pb-10 md:pt-36 md:pb-12"
     >
       {/* Top accent bar */}
       <div className="absolute inset-x-0 top-0 h-2 bg-gradient-to-r from-[var(--sc-green)] via-[var(--sc-yellow)] to-[var(--pt-red)]" />
@@ -158,134 +182,80 @@ export function JuntosNaLuta() {
 
       <div className="mx-auto w-full max-w-7xl px-4">
         {/* ── Header ── */}
-        <div className="mb-12 max-w-3xl">
+        <div className="mb-6 max-w-3xl">
           <p className="text-xs font-bold uppercase tracking-widest text-[var(--sc-green)]">
             Caminhando por Santa Catarina
           </p>
-          <h2 className="mt-2 font-display text-4xl leading-tight text-[var(--pt-red)] md:text-5xl">
+          <h2 className="mt-1 font-display text-3xl leading-tight text-[var(--pt-red)] sm:text-4xl md:text-5xl">
             Juntos na Luta
           </h2>
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-foreground/70 md:text-lg">
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-foreground/70 md:text-base">
             Um registro vivo das agendas, encontros e alianças que aproximam a
             campanha das pessoas que constroem Santa Catarina todos os dias.
           </p>
         </div>
 
-        {/* ── Featured Card ── */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.15 }}
-        >
-          <motion.button
-            type="button"
-            variants={cardVariants}
-            onClick={() => setModalContent({ type: "post" })}
-            className="group relative w-full overflow-hidden rounded-[1.5rem] border-4 border-[var(--sc-green)] bg-foreground text-left shadow-2xl shadow-black/10 transition hover:-translate-y-1 hover:shadow-[0_24px_70px_-28px_rgba(0,0,0,0.55)] focus:outline-none focus:ring-2 focus:ring-[var(--sc-green)] focus:ring-offset-4"
-            aria-label="Abrir detalhes da agenda Campo e cidade"
-          >
-            <div className="relative">
-              <img
-                src={featuredCard.image}
-                alt="Agenda entre o campo e a cidade em Joinville"
-                className="w-full max-h-[60vh] object-contain bg-foreground transition duration-700 group-hover:scale-[1.02]"
-                draggable={false}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 p-6 text-white md:p-8">
-                <span className="inline-flex items-center gap-2 rounded-full bg-[var(--sc-yellow)] px-3 py-1 text-xs font-extrabold uppercase tracking-widest text-[var(--pt-red-dark)]">
-                  <Newspaper className="h-4 w-4" />
-                  Abrir post
-                </span>
-                <h3 className="mt-4 font-display text-3xl leading-tight lg:text-4xl">
-                  Entre o Campo e a Cidade
-                </h3>
-                <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/82 md:text-base">
-                  Clique para ver a galeria e os detalhes da feira estadual e do
-                  seminário em Joinville.
-                </p>
-              </div>
-
-              {/* Hover icon */}
-              <div className="absolute right-5 top-5 inline-flex h-12 w-12 items-center justify-center rounded-full bg-white/16 text-white opacity-0 backdrop-blur transition group-hover:opacity-100">
-                <Newspaper className="h-6 w-6" />
-              </div>
-            </div>
-          </motion.button>
-        </motion.div>
-
-        {/* ── Cards Carousel ── */}
-        <div className="relative mt-8">
-          {/* Nav arrows */}
-          <div className="mb-4 flex items-center justify-end gap-2">
-            <button
-              type="button"
-              onClick={scrollPrev}
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full border-2 border-[var(--pt-red)] text-[var(--pt-red)] transition hover:bg-[var(--pt-red)] hover:text-white focus:outline-none focus:ring-2 focus:ring-[var(--pt-red)] focus:ring-offset-2"
-              aria-label="Slide anterior"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-            <button
-              type="button"
-              onClick={scrollNext}
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full border-2 border-[var(--pt-red)] text-[var(--pt-red)] transition hover:bg-[var(--pt-red)] hover:text-white focus:outline-none focus:ring-2 focus:ring-[var(--pt-red)] focus:ring-offset-2"
-              aria-label="Próximo slide"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </button>
-          </div>
-
-          {/* Embla viewport */}
-          <div ref={carouselRef} className="overflow-hidden">
-            <motion.div
-              className="flex gap-5"
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.1 }}
-            >
-              {cards.map((card) => (
-                <motion.button
-                  key={card.city}
+        {/* ── Featured Cards Carousel ── */}
+        <div className="relative flex-1 flex flex-col min-h-0">
+          <div ref={featuredRef} className="overflow-hidden rounded-[1.5rem] border-4 border-[var(--sc-green)] shadow-2xl shadow-black/10 flex-1 min-h-0">
+            <div className="flex">
+              {featuredCards.map((fc) => (
+                <button
+                  key={fc.postId}
                   type="button"
-                  variants={cardVariants}
-                  onClick={() => openImage(card)}
-                  className="group relative min-w-0 shrink-0 grow-0 basis-[75%] overflow-hidden rounded-[1.5rem] border-4 border-[var(--sc-yellow)] bg-foreground text-left shadow-xl shadow-black/8 transition hover:-translate-y-1 hover:shadow-[0_20px_60px_-24px_rgba(0,0,0,0.5)] focus:outline-none focus:ring-2 focus:ring-[var(--sc-yellow)] focus:ring-offset-4 sm:basis-[50%] lg:basis-[30%]"
-                  aria-label={`Ampliar imagem de ${card.city}`}
+                  onClick={() => setModalContent({ type: "post", postId: fc.postId })}
+                  className="group relative min-w-0 shrink-0 grow-0 basis-full bg-foreground text-left focus:outline-none"
+                  aria-label={`Abrir detalhes: ${fc.label}`}
                 >
-                  <div className="relative overflow-hidden">
+                  <div className="relative">
                     <img
-                      src={card.image}
-                      alt={`${card.title} em ${card.city}`}
-                      className="aspect-square w-full object-contain bg-foreground transition duration-700 group-hover:scale-[1.02]"
+                      src={fc.image}
+                      alt={fc.label}
+                      className="w-full object-contain bg-foreground transition duration-700 group-hover:scale-[1.02]"
+                      style={{ maxHeight: "calc(100dvh - 22rem)" }}
                       draggable={false}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
-
-                    <div className="absolute inset-x-0 bottom-0 p-5">
-                      <span className="inline-flex items-center gap-2 rounded-full bg-white/14 px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-white backdrop-blur">
-                        <MapPin className="h-3.5 w-3.5 text-[var(--sc-yellow)]" />
-                        {card.city}, SC
+                    <div className="absolute inset-x-0 bottom-0 p-6 text-white md:p-8">
+                      <span className="inline-flex items-center gap-2 rounded-full bg-[var(--sc-yellow)] px-3 py-1 text-xs font-extrabold uppercase tracking-widest text-[var(--pt-red-dark)]">
+                        <Newspaper className="h-4 w-4" />
+                        Abrir post
                       </span>
-                      <h3 className="mt-3 font-display text-xl leading-tight text-white sm:text-2xl">
-                        {card.title}
+                      <h3 className="mt-4 font-display text-3xl leading-tight lg:text-4xl">
+                        {fc.label}
                       </h3>
-                      <p className="mt-2 text-sm leading-relaxed text-white/75">
-                        {card.description}
+                      <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/82 md:text-base">
+                        {fc.subtitle}
                       </p>
                     </div>
 
                     {/* Hover icon */}
-                    <div className="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/16 text-white opacity-0 backdrop-blur transition group-hover:opacity-100">
-                      <ZoomIn className="h-5 w-5" />
+                    <div className="absolute right-5 top-5 inline-flex h-12 w-12 items-center justify-center rounded-full bg-white/16 text-white opacity-0 backdrop-blur transition group-hover:opacity-100">
+                      <Newspaper className="h-6 w-6" />
                     </div>
                   </div>
-                </motion.button>
+                </button>
               ))}
-            </motion.div>
+            </div>
           </div>
+
+          {/* Side nav arrows */}
+          <button
+            type="button"
+            onClick={featuredPrev}
+            className="absolute left-2 top-1/2 z-10 -translate-y-1/2 inline-flex h-11 w-11 items-center justify-center rounded-full border-2 border-[var(--sc-green)] bg-white/80 text-[var(--sc-green)] shadow-lg backdrop-blur transition hover:bg-[var(--sc-green)] hover:text-white focus:outline-none focus:ring-2 focus:ring-[var(--sc-green)] focus:ring-offset-2 sm:left-3"
+            aria-label="Post anterior"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            onClick={featuredNext}
+            className="absolute right-2 top-1/2 z-10 -translate-y-1/2 inline-flex h-11 w-11 items-center justify-center rounded-full border-2 border-[var(--sc-green)] bg-white/80 text-[var(--sc-green)] shadow-lg backdrop-blur transition hover:bg-[var(--sc-green)] hover:text-white focus:outline-none focus:ring-2 focus:ring-[var(--sc-green)] focus:ring-offset-2 sm:right-3"
+            aria-label="Próximo post"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
         </div>
       </div>
 
@@ -295,14 +265,16 @@ export function JuntosNaLuta() {
           <AnimatePresence>
             {modalContent && (
               <ModalShell onClose={() => setModalContent(null)}>
-                {modalContent.type === "post" ? (
+                {modalContent.type === "post" && modalContent.postId === "campo-cidade" ? (
                   <PostModal onClose={() => setModalContent(null)} />
-                ) : (
+                ) : modalContent.type === "post" && modalContent.postId === "assembleia" ? (
+                  <AssembleiaPostModal onClose={() => setModalContent(null)} />
+                ) : modalContent.type === "image" ? (
                   <ImageModal
                     modal={modalContent}
                     onClose={() => setModalContent(null)}
                   />
-                )}
+                ) : null}
               </ModalShell>
             )}
           </AnimatePresence>,
@@ -479,6 +451,113 @@ function PostModal({ onClose }: { onClose: () => void }) {
           <p className="font-semibold text-[var(--pt-red)]">
             #Cooperativismo #AgriculturaFamiliar #Joinville #Trabalhadores
             #Seminário #EconomiaSolidária
+          </p>
+        </div>
+      </div>
+    </motion.article>
+  );
+}
+
+/* ── Assembleia Post Modal ───────────────────────────────────────── */
+
+function AssembleiaPostModal({ onClose }: { onClose: () => void }) {
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: true,
+    align: "center",
+  });
+
+  return (
+    <motion.article
+      initial={{ opacity: 0, scale: 0.96, y: 18 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.96, y: 18 }}
+      transition={{ type: "spring" as const, damping: 25, stiffness: 260 }}
+      className="relative max-h-[90vh] w-full max-w-3xl overflow-hidden rounded-[1.5rem] bg-white text-foreground shadow-2xl"
+    >
+      {/* Sticky header */}
+      <div className="sticky top-0 z-20 flex items-start justify-between gap-4 border-b border-foreground/10 bg-white/95 px-5 py-4 backdrop-blur md:px-7">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-widest text-[var(--sc-green)]">
+            Joinville, SC
+          </p>
+          <h3 className="mt-1 font-display text-2xl leading-tight text-[var(--pt-red)] md:text-3xl">
+            Assembleia dos Correios
+          </h3>
+        </div>
+        <button
+          type="button"
+          onClick={onClose}
+          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-foreground/5 text-foreground/70 transition hover:bg-foreground/10 hover:text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--pt-red)]"
+          aria-label="Fechar post"
+        >
+          <X className="h-5 w-5" />
+        </button>
+      </div>
+
+      {/* Scrollable body */}
+      <div className="max-h-[calc(90vh-88px)] overflow-y-auto p-5 md:p-7">
+        {/* Image carousel */}
+        <div className="relative overflow-hidden rounded-2xl bg-black">
+          <div ref={emblaRef} className="overflow-hidden">
+            <div className="flex">
+              {assembleiaImages.map((image, index) => (
+                <div
+                  key={image}
+                  className="flex min-w-0 shrink-0 grow-0 basis-full items-center justify-center h-[60vh]"
+                >
+                  <img
+                    src={image}
+                    alt={`Assembleia dos Correios - Foto ${index + 1}`}
+                    className="w-full max-h-[60vh] object-contain"
+                    draggable={false}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => emblaApi?.scrollPrev()}
+            className="absolute left-3 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white transition hover:bg-black/75 focus:outline-none focus:ring-2 focus:ring-white"
+            aria-label="Imagem anterior"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => emblaApi?.scrollNext()}
+            className="absolute right-3 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white transition hover:bg-black/75 focus:outline-none focus:ring-2 focus:ring-white"
+            aria-label="Proxima imagem"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Post body */}
+        <div className="mt-6 space-y-4 text-sm leading-relaxed text-foreground/78 md:text-base">
+          <p>
+            📢 Assembleia dos trabalhadores dos Correios de Joinville e região!
+          </p>
+          <p>
+            Nosso pré-candidato a deputado estadual, Rodolfo de Ramos, esteve
+            presente apoiando a luta dessa categoria tão importante para o povo
+            brasileiro.
+          </p>
+          <p>
+            Mais do que apoiar, aproveitou o momento para se apresentar, dialogar
+            com os trabalhadores e reafirmar seu compromisso com a defesa dos
+            direitos, da valorização profissional e de melhores condições de
+            trabalho.
+          </p>
+          <p>
+            ✊🏽 Seguimos juntos na construção de um projeto coletivo, que nasce
+            da base e fortalece quem realmente move o Brasil: a classe
+            trabalhadora!
+          </p>
+          <p className="font-semibold text-[var(--pt-red)]">
+            #Correios #ClasseTrabalhadora #Joinville #Luta #Direitos
+            #RodolfoDeRamos #DeputadoEstadual #TrabalhadoresUnidos
           </p>
         </div>
       </div>
