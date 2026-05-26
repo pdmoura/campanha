@@ -21,12 +21,29 @@ import capa5 from "@/assets/capa5.webp";
 import assembleia1 from "@/assets/assembleia1.webp";
 import assembleia2 from "@/assets/assembleia2.webp";
 import assembleia3 from "@/assets/assembleia3.webp";
+import meta1 from "@/assets/meta1.jpeg";
+import meta2 from "@/assets/meta2.jpeg";
+import meta3 from "@/assets/meta3.jpeg";
+import preCandidato11 from "@/assets/pre-candidato-aprovado (11).jpeg";
+
+/* Eagerly import all 44 pre-candidato photos via glob */
+const preCandidatoGlob = import.meta.glob<{ default: string }>(
+  "@/assets/pre-candidato-aprovado*.jpeg",
+  { eager: true },
+);
+const preCandidatoImages = Object.entries(preCandidatoGlob)
+  .map(([path, mod]) => {
+    const num = parseInt(path.match(/\((\d+)\)/)?.[1] ?? "0", 10);
+    return { num, src: mod.default };
+  })
+  .sort((a, b) => a.num - b.num)
+  .map((item) => item.src);
 
 /* ── Types ───────────────────────────────────────────────────────── */
 
 type ModalContent =
   | { type: "image"; src: string; city: string }
-  | { type: "post"; postId: "campo-cidade" | "assembleia" };
+  | { type: "post"; postId: "campo-cidade" | "assembleia" | "metalurgicos" | "pre-candidato" };
 
 type LutaCard = {
   city: string;
@@ -93,8 +110,27 @@ const assembleiaCard: LutaCard = {
 
 const postImages = [img1, img2, img3, img4];
 const assembleiaImages = [assembleia1, assembleia2, assembleia3];
+const metalurgicosImages = [meta1, meta2, meta3];
 
-type FeaturedCard = LutaCard & { postId: "campo-cidade" | "assembleia"; label: string; subtitle: string };
+const metalurgicosCard: LutaCard = {
+  city: "Joinville",
+  image: meta2,
+  eyebrow: "Setor Metalúrgico",
+  title: "Diálogo com trabalhadores do setor metalúrgicos",
+  description:
+    "Rodolfo em diálogo direto com a base metalúrgica, fortalecendo a luta dos trabalhadores.",
+};
+
+const preCandidatoCard: LutaCard = {
+  city: "Santa Catarina",
+  image: preCandidato11,
+  eyebrow: "Pré-candidatura",
+  title: "Rodolfo de Ramos é confirmado como pré-candidato",
+  description:
+    "Rodolfo é confirmado como pré-candidato a deputado estadual pelo PT em Santa Catarina.",
+};
+
+type FeaturedCard = LutaCard & { postId: "campo-cidade" | "assembleia" | "metalurgicos" | "pre-candidato"; label: string; subtitle: string };
 
 const featuredCards: FeaturedCard[] = [
   {
@@ -108,6 +144,18 @@ const featuredCards: FeaturedCard[] = [
     postId: "assembleia",
     label: "Assembleia dos Correios",
     subtitle: "Apoiando a luta dos trabalhadores dos Correios de Joinville e região. Clique para ver mais.",
+  },
+  {
+    ...metalurgicosCard,
+    postId: "metalurgicos",
+    label: "Diálogo com trabalhadores do setor metalúrgicos",
+    subtitle: "Rodolfo em diálogo direto com a base metalúrgica. Clique para ver mais.",
+  },
+  {
+    ...preCandidatoCard,
+    postId: "pre-candidato",
+    label: "Rodolfo de Ramos é confirmado como pré-candidato a deputado estadual",
+    subtitle: "Confirmação da pré-candidatura pelo PT em Santa Catarina. Clique para ver mais.",
   },
 ];
 
@@ -269,6 +317,10 @@ export function JuntosNaLuta() {
                   <PostModal onClose={() => setModalContent(null)} />
                 ) : modalContent.type === "post" && modalContent.postId === "assembleia" ? (
                   <AssembleiaPostModal onClose={() => setModalContent(null)} />
+                ) : modalContent.type === "post" && modalContent.postId === "metalurgicos" ? (
+                  <MetalurgicosPostModal onClose={() => setModalContent(null)} />
+                ) : modalContent.type === "post" && modalContent.postId === "pre-candidato" ? (
+                  <PreCandidatoPostModal onClose={() => setModalContent(null)} />
                 ) : modalContent.type === "image" ? (
                   <ImageModal
                     modal={modalContent}
@@ -558,6 +610,223 @@ function AssembleiaPostModal({ onClose }: { onClose: () => void }) {
           <p className="font-semibold text-[var(--pt-red)]">
             #Correios #ClasseTrabalhadora #Joinville #Luta #Direitos
             #RodolfoDeRamos #DeputadoEstadual #TrabalhadoresUnidos
+          </p>
+        </div>
+      </div>
+    </motion.article>
+  );
+}
+
+/* ── Metalúrgicos Post Modal ────────────────────────────────────── */
+
+function MetalurgicosPostModal({ onClose }: { onClose: () => void }) {
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: true,
+    align: "center",
+  });
+
+  return (
+    <motion.article
+      initial={{ opacity: 0, scale: 0.96, y: 18 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.96, y: 18 }}
+      transition={{ type: "spring" as const, damping: 25, stiffness: 260 }}
+      className="relative max-h-[90vh] w-full max-w-3xl overflow-hidden rounded-[1.5rem] bg-white text-foreground shadow-2xl"
+    >
+      {/* Sticky header */}
+      <div className="sticky top-0 z-20 flex items-start justify-between gap-4 border-b border-foreground/10 bg-white/95 px-5 py-4 backdrop-blur md:px-7">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-widest text-[var(--sc-green)]">
+            Joinville, SC
+          </p>
+          <h3 className="mt-1 font-display text-2xl leading-tight text-[var(--pt-red)] md:text-3xl">
+            Diálogo com trabalhadores do setor metalúrgicos
+          </h3>
+        </div>
+        <button
+          type="button"
+          onClick={onClose}
+          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-foreground/5 text-foreground/70 transition hover:bg-foreground/10 hover:text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--pt-red)]"
+          aria-label="Fechar post"
+        >
+          <X className="h-5 w-5" />
+        </button>
+      </div>
+
+      {/* Scrollable body */}
+      <div className="max-h-[calc(90vh-88px)] overflow-y-auto p-5 pb-8 md:p-7 md:pb-10">
+        {/* Image carousel */}
+        <div className="relative overflow-hidden rounded-2xl bg-black">
+          <div ref={emblaRef} className="overflow-hidden">
+            <div className="flex">
+              {metalurgicosImages.map((image, index) => (
+                <div
+                  key={image}
+                  className="flex min-w-0 shrink-0 grow-0 basis-full items-center justify-center h-[60vh]"
+                >
+                  <img
+                    src={image}
+                    alt={`Metalúrgicos - Foto ${index + 1}`}
+                    className="w-full max-h-[60vh] object-contain"
+                    draggable={false}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => emblaApi?.scrollPrev()}
+            className="absolute left-3 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white transition hover:bg-black/75 focus:outline-none focus:ring-2 focus:ring-white"
+            aria-label="Imagem anterior"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => emblaApi?.scrollNext()}
+            className="absolute right-3 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white transition hover:bg-black/75 focus:outline-none focus:ring-2 focus:ring-white"
+            aria-label="Proxima imagem"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Post body */}
+        <div className="mt-6 space-y-4 text-sm leading-relaxed text-foreground/78 md:text-base">
+          <p>
+            📢 Diálogo com trabalhadores do setor metalúrgicos!
+          </p>
+          <p>
+            Nosso pré-candidato a deputado estadual, Rodolfo de Ramos,
+            esteve em contato direto com a base metalúrgica de Joinville e
+            região, ouvindo demandas, compartilhando propostas e
+            fortalecendo os laços com quem constrói o dia a dia da
+            indústria catarinense.
+          </p>
+          <p>
+            O diálogo com os trabalhadores é a base da nossa luta.
+            Seguimos firmes na defesa dos direitos, da valorização
+            profissional e de melhores condições de trabalho para toda a
+            categoria.
+          </p>
+          <p>
+            ✊🏽 Juntos somos mais fortes!
+          </p>
+          <p className="font-semibold text-[var(--pt-red)]">
+            #Metalúrgicos #Joinville #ClasseTrabalhadora #RodolfoDeRamos
+            #DeputadoEstadual #TrabalhadoresUnidos
+          </p>
+        </div>
+      </div>
+    </motion.article>
+  );
+}
+
+/* ── Pré-Candidato Post Modal ─────────────────────────────────── */
+
+function PreCandidatoPostModal({ onClose }: { onClose: () => void }) {
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: true,
+    align: "center",
+  });
+
+  return (
+    <motion.article
+      initial={{ opacity: 0, scale: 0.96, y: 18 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.96, y: 18 }}
+      transition={{ type: "spring" as const, damping: 25, stiffness: 260 }}
+      className="relative max-h-[90vh] w-full max-w-3xl overflow-hidden rounded-[1.5rem] bg-white text-foreground shadow-2xl"
+    >
+      {/* Sticky header */}
+      <div className="sticky top-0 z-20 flex items-start justify-between gap-4 border-b border-foreground/10 bg-white/95 px-5 py-4 backdrop-blur md:px-7">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-widest text-[var(--sc-green)]">
+            Santa Catarina
+          </p>
+          <h3 className="mt-1 font-display text-xl leading-tight text-[var(--pt-red)] sm:text-2xl md:text-3xl">
+            Rodolfo de Ramos é confirmado como pré-candidato a deputado estadual
+          </h3>
+        </div>
+        <button
+          type="button"
+          onClick={onClose}
+          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-foreground/5 text-foreground/70 transition hover:bg-foreground/10 hover:text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--pt-red)]"
+          aria-label="Fechar post"
+        >
+          <X className="h-5 w-5" />
+        </button>
+      </div>
+
+      {/* Scrollable body */}
+      <div className="max-h-[calc(90vh-88px)] overflow-y-auto p-5 pb-8 md:p-7 md:pb-10">
+        {/* Image carousel */}
+        <div className="relative overflow-hidden rounded-2xl bg-black">
+          <div ref={emblaRef} className="overflow-hidden">
+            <div className="flex">
+              {preCandidatoImages.map((image, index) => (
+                <div
+                  key={index}
+                  className="flex min-w-0 shrink-0 grow-0 basis-full items-center justify-center h-[60vh]"
+                >
+                  <img
+                    src={image}
+                    alt={`Pré-candidatura confirmada - Foto ${index + 1}`}
+                    className="w-full max-h-[60vh] object-contain"
+                    draggable={false}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => emblaApi?.scrollPrev()}
+            className="absolute left-3 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white transition hover:bg-black/75 focus:outline-none focus:ring-2 focus:ring-white"
+            aria-label="Imagem anterior"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => emblaApi?.scrollNext()}
+            className="absolute right-3 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white transition hover:bg-black/75 focus:outline-none focus:ring-2 focus:ring-white"
+            aria-label="Proxima imagem"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Post body */}
+        <div className="mt-6 space-y-4 text-sm leading-relaxed text-foreground/78 md:text-base">
+          <p className="font-semibold text-foreground">
+            Rodolfo de Ramos é confirmado como pré-candidato a deputado estadual
+            pelo Partido dos Trabalhadores em Santa Catarina.
+          </p>
+          <p>
+            No último dia 23 de maio aconteceu a promulgação das
+            pré-candidaturas do chamado “time de Lula” em Santa Catarina. Na
+            oportunidade, foram apresentados Gelson Merisio pelo Partido
+            Socialista Brasileiro como pré-candidato a governador, Angela Albino
+            pelo Partido Democrático Trabalhista como pré-candidata a
+            vice-governadora, além de Décio Lima do PT e Afrânio Boppré do
+            Partido Socialismo e Liberdade como pré-candidatos ao Senado.
+          </p>
+          <p className="text-xs text-foreground/50">
+            Jornal A Gazeta · 2
+          </p>
+          <p>
+            Ao todo, mais de 250 pré-candidaturas a deputado federal e deputado
+            estadual foram apresentadas pelos partidos PT, PSOL, PDT, PCdoB,
+            REDE e PV, que devem compor a frente política de apoio ao presidente
+            Luiz Inácio Lula da Silva em Santa Catarina nas eleições de 2026.
+          </p>
+          <p className="font-semibold text-[var(--pt-red)]">
+            #RodolfoDeRamos #DeputadoEstadual #PT #SantaCatarina
+            #TimeDeLula #Eleições2026
           </p>
         </div>
       </div>
