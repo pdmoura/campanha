@@ -39,11 +39,42 @@ const preCandidatoImages = Object.entries(preCandidatoGlob)
   .sort((a, b) => a.num - b.num)
   .map((item) => item.src);
 
+/* Eagerly import francisco pre-candidatura photos via glob */
+import franciscoCover from "@/assets/pre-candidatura-francisco (9).jpeg";
+const franciscoGlob = import.meta.glob<{ default: string }>(
+  "@/assets/pre-candidatura-francisco*.jpeg",
+  { eager: true },
+);
+const franciscoImages = Object.entries(franciscoGlob)
+  .map(([path, mod]) => {
+    const num = parseInt(path.match(/\((\d+)\)/)?.[1] ?? "0", 10);
+    return { num, src: mod.default };
+  })
+  .filter((item) => item.num >= 1 && item.num <= 8)
+  .sort((a, b) => a.num - b.num)
+  .map((item) => item.src);
+
+/* Eagerly import indios photos via glob + video */
+import indiosCover from "@/assets/indios (4).jpeg";
+import indiosVideo from "@/assets/video-indios.mp4";
+const indiosGlob = import.meta.glob<{ default: string }>(
+  "@/assets/indios*.jpeg",
+  { eager: true },
+);
+const indiosImages = Object.entries(indiosGlob)
+  .map(([path, mod]) => {
+    const num = parseInt(path.match(/\((\d+)\)/)?.[1] ?? "0", 10);
+    return { num, src: mod.default };
+  })
+  .filter((item) => item.num !== 4)
+  .sort((a, b) => a.num - b.num)
+  .map((item) => item.src);
+
 /* ── Types ───────────────────────────────────────────────────────── */
 
 type ModalContent =
   | { type: "image"; src: string; city: string }
-  | { type: "post"; postId: "campo-cidade" | "assembleia" | "metalurgicos" | "pre-candidato" };
+  | { type: "post"; postId: "campo-cidade" | "assembleia" | "metalurgicos" | "pre-candidato" | "francisco" | "indios" };
 
 type LutaCard = {
   city: string;
@@ -130,7 +161,25 @@ const preCandidatoCard: LutaCard = {
     "Rodolfo é confirmado como pré-candidato a deputado estadual pelo PT em Santa Catarina.",
 };
 
-type FeaturedCard = LutaCard & { postId: "campo-cidade" | "assembleia" | "metalurgicos" | "pre-candidato"; label: string; subtitle: string };
+const franciscoCard: LutaCard = {
+  city: "Santa Catarina",
+  image: franciscoCover,
+  eyebrow: "Pré-candidatura",
+  title: "Lançamento da pré-candidatura de Francisco de Assis",
+  description:
+    "Lançamento da pré-candidatura a deputado federal de Francisco de Assis pelo PT.",
+};
+
+const indiosCard: LutaCard = {
+  city: "Joinville",
+  image: indiosCover,
+  eyebrow: "Cultura indígena",
+  title: "Esse é com os índios",
+  description:
+    "Espaço cultural Jacatirão em Joinville — celebrando a cultura e resistência dos povos originários.",
+};
+
+type FeaturedCard = LutaCard & { postId: "campo-cidade" | "assembleia" | "metalurgicos" | "pre-candidato" | "francisco" | "indios"; label: string; subtitle: string };
 
 const featuredCards: FeaturedCard[] = [
   {
@@ -156,6 +205,18 @@ const featuredCards: FeaturedCard[] = [
     postId: "pre-candidato",
     label: "Rodolfo de Ramos é confirmado como pré-candidato a deputado estadual",
     subtitle: "Confirmação da pré-candidatura pelo PT em Santa Catarina. Clique para ver mais.",
+  },
+  {
+    ...franciscoCard,
+    postId: "francisco",
+    label: "Lançamento da pré candidatura a deputado federal Francisco de Assis PT",
+    subtitle: "Lançamento da pré-candidatura a deputado federal. Clique para ver mais.",
+  },
+  {
+    ...indiosCard,
+    postId: "indios",
+    label: "Esse é com os índios",
+    subtitle: "Espaço cultural Jacatirão em Joinville. Clique para ver mais.",
   },
 ];
 
@@ -321,6 +382,10 @@ export function JuntosNaLuta() {
                   <MetalurgicosPostModal onClose={() => setModalContent(null)} />
                 ) : modalContent.type === "post" && modalContent.postId === "pre-candidato" ? (
                   <PreCandidatoPostModal onClose={() => setModalContent(null)} />
+                ) : modalContent.type === "post" && modalContent.postId === "francisco" ? (
+                  <FranciscoPostModal onClose={() => setModalContent(null)} />
+                ) : modalContent.type === "post" && modalContent.postId === "indios" ? (
+                  <IndiosPostModal onClose={() => setModalContent(null)} />
                 ) : modalContent.type === "image" ? (
                   <ImageModal
                     modal={modalContent}
@@ -827,6 +892,234 @@ function PreCandidatoPostModal({ onClose }: { onClose: () => void }) {
           <p className="font-semibold text-[var(--pt-red)]">
             #RodolfoDeRamos #DeputadoEstadual #PT #SantaCatarina
             #TimeDeLula #Eleições2026
+          </p>
+        </div>
+      </div>
+    </motion.article>
+  );
+}
+
+/* ── Francisco Post Modal ─────────────────────────────────────── */
+
+function FranciscoPostModal({ onClose }: { onClose: () => void }) {
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: true,
+    align: "center",
+  });
+
+  return (
+    <motion.article
+      initial={{ opacity: 0, scale: 0.96, y: 18 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.96, y: 18 }}
+      transition={{ type: "spring" as const, damping: 25, stiffness: 260 }}
+      className="relative max-h-[90vh] w-full max-w-3xl overflow-hidden rounded-[1.5rem] bg-white text-foreground shadow-2xl"
+    >
+      {/* Sticky header */}
+      <div className="sticky top-0 z-20 flex items-start justify-between gap-4 border-b border-foreground/10 bg-white/95 px-5 py-4 backdrop-blur md:px-7">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-widest text-[var(--sc-green)]">
+            Santa Catarina
+          </p>
+          <h3 className="mt-1 font-display text-xl leading-tight text-[var(--pt-red)] sm:text-2xl md:text-3xl">
+            Lançamento da pré candidatura a deputado federal Francisco de Assis PT
+          </h3>
+        </div>
+        <button
+          type="button"
+          onClick={onClose}
+          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-foreground/5 text-foreground/70 transition hover:bg-foreground/10 hover:text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--pt-red)]"
+          aria-label="Fechar post"
+        >
+          <X className="h-5 w-5" />
+        </button>
+      </div>
+
+      {/* Scrollable body */}
+      <div className="max-h-[calc(90vh-88px)] overflow-y-auto p-5 pb-8 md:p-7 md:pb-10">
+        {/* Image carousel */}
+        <div className="relative overflow-hidden rounded-2xl bg-black">
+          <div ref={emblaRef} className="overflow-hidden">
+            <div className="flex">
+              {franciscoImages.map((image, index) => (
+                <div
+                  key={index}
+                  className="flex min-w-0 shrink-0 grow-0 basis-full items-center justify-center h-[60vh]"
+                >
+                  <img
+                    src={image}
+                    alt={`Pré-candidatura Francisco de Assis - Foto ${index + 1}`}
+                    className="w-full max-h-[60vh] object-contain"
+                    draggable={false}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => emblaApi?.scrollPrev()}
+            className="absolute left-3 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white transition hover:bg-black/75 focus:outline-none focus:ring-2 focus:ring-white"
+            aria-label="Imagem anterior"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => emblaApi?.scrollNext()}
+            className="absolute right-3 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white transition hover:bg-black/75 focus:outline-none focus:ring-2 focus:ring-white"
+            aria-label="Proxima imagem"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Post body */}
+        <div className="mt-6 space-y-4 text-sm leading-relaxed text-foreground/78 md:text-base">
+          <p className="font-semibold text-foreground">
+            Lançamento da pré candidatura a deputado federal Francisco de Assis PT
+          </p>
+          <p>
+            Rodolfo de Ramos esteve presente no lançamento da
+            pré-candidatura a deputado federal do companheiro Francisco de
+            Assis pelo Partido dos Trabalhadores, reforçando a unidade e o
+            compromisso com a construção de um projeto coletivo para Santa
+            Catarina.
+          </p>
+          <p>
+            Juntos, seguimos fortalecendo a frente progressista e
+            trabalhando pela representação popular em todas as esferas.
+          </p>
+          <p>
+            ✊🏽 A luta continua!
+          </p>
+          <p className="font-semibold text-[var(--pt-red)]">
+            #FranciscoDeAssis #DeputadoFederal #PT #SantaCatarina
+            #RodolfoDeRamos #Eleições2026
+          </p>
+        </div>
+      </div>
+    </motion.article>
+  );
+}
+
+/* ── Índios Post Modal ────────────────────────────────────────── */
+
+function IndiosPostModal({ onClose }: { onClose: () => void }) {
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: true,
+    align: "center",
+  });
+
+  /* Combined media: images + video at the end */
+  const mediaItems: { type: "image" | "video"; src: string }[] = [
+    ...indiosImages.map((src) => ({ type: "image" as const, src })),
+    { type: "video", src: indiosVideo },
+  ];
+
+  return (
+    <motion.article
+      initial={{ opacity: 0, scale: 0.96, y: 18 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.96, y: 18 }}
+      transition={{ type: "spring" as const, damping: 25, stiffness: 260 }}
+      className="relative max-h-[90vh] w-full max-w-3xl overflow-hidden rounded-[1.5rem] bg-white text-foreground shadow-2xl"
+    >
+      {/* Sticky header */}
+      <div className="sticky top-0 z-20 flex items-start justify-between gap-4 border-b border-foreground/10 bg-white/95 px-5 py-4 backdrop-blur md:px-7">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-widest text-[var(--sc-green)]">
+            Joinville, SC
+          </p>
+          <h3 className="mt-1 font-display text-xl leading-tight text-[var(--pt-red)] sm:text-2xl md:text-3xl">
+            Esse é com os índios
+          </h3>
+          <p className="mt-0.5 text-xs text-foreground/50">
+            Espaço cultural Jacatirão em Joinville
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={onClose}
+          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-foreground/5 text-foreground/70 transition hover:bg-foreground/10 hover:text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--pt-red)]"
+          aria-label="Fechar post"
+        >
+          <X className="h-5 w-5" />
+        </button>
+      </div>
+
+      {/* Scrollable body */}
+      <div className="max-h-[calc(90vh-88px)] overflow-y-auto p-5 pb-8 md:p-7 md:pb-10">
+        {/* Media carousel (images + video) */}
+        <div className="relative overflow-hidden rounded-2xl bg-black">
+          <div ref={emblaRef} className="overflow-hidden">
+            <div className="flex">
+              {mediaItems.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex min-w-0 shrink-0 grow-0 basis-full items-center justify-center h-[60vh]"
+                >
+                  {item.type === "image" ? (
+                    <img
+                      src={item.src}
+                      alt={`Esse é com os índios - Foto ${index + 1}`}
+                      className="w-full max-h-[60vh] object-contain"
+                      draggable={false}
+                    />
+                  ) : (
+                    <video
+                      src={item.src}
+                      controls
+                      playsInline
+                      preload="metadata"
+                      className="w-full max-h-[60vh] object-contain"
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => emblaApi?.scrollPrev()}
+            className="absolute left-3 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white transition hover:bg-black/75 focus:outline-none focus:ring-2 focus:ring-white"
+            aria-label="Imagem anterior"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => emblaApi?.scrollNext()}
+            className="absolute right-3 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white transition hover:bg-black/75 focus:outline-none focus:ring-2 focus:ring-white"
+            aria-label="Proxima imagem"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Post body */}
+        <div className="mt-6 space-y-4 text-sm leading-relaxed text-foreground/78 md:text-base">
+          <p className="font-semibold text-foreground">
+            Esse é com os índios — Espaço cultural Jacatirão em Joinville
+          </p>
+          <p>
+            Rodolfo de Ramos marcou presença no Espaço Cultural Jacatirão,
+            celebrando a cultura e a resistência dos povos originários.
+            Um momento de troca, aprendizado e reafirmação do compromisso
+            com a defesa dos direitos indígenas e da preservação cultural.
+          </p>
+          <p>
+            A luta pelos povos originários é parte fundamental da
+            construção de um Brasil mais justo e igualitário.
+          </p>
+          <p>
+            ✊🏽 Juntos na defesa da diversidade e dos direitos de todos os povos!
+          </p>
+          <p className="font-semibold text-[var(--pt-red)]">
+            #PovosOriginários #CulturaIndígena #Joinville #Jacatirão
+            #RodolfoDeRamos #DeputadoEstadual
           </p>
         </div>
       </div>
