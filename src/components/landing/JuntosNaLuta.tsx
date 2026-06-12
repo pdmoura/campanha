@@ -70,11 +70,29 @@ const indiosImages = Object.entries(indiosGlob)
   .sort((a, b) => a.num - b.num)
   .map((item) => item.src);
 
+import sindicatoAraquariImg from "@/assets/metalurgicos-rodolfo.jpeg";
+
+/* Eagerly import trabalhador-defende photos via glob + video */
+import trabalhadorDefendeCover from "@/assets/trabalhador-defende (6).jpeg";
+import trabalhadorDefendeVideo from "@/assets/trabalhador-defende-video.mp4";
+const trabalhadorDefendeGlob = import.meta.glob<{ default: string }>(
+  "@/assets/trabalhador-defende *.jpeg",
+  { eager: true },
+);
+const trabalhadorDefendeImages = Object.entries(trabalhadorDefendeGlob)
+  .map(([path, mod]) => {
+    const num = parseInt(path.match(/\((\d+)\)/)?.[1] ?? "0", 10);
+    return { num, src: mod.default };
+  })
+  .filter((item) => item.num >= 1 && item.num <= 22)
+  .sort((a, b) => a.num - b.num)
+  .map((item) => item.src);
+
 /* ── Types ───────────────────────────────────────────────────────── */
 
 type ModalContent =
   | { type: "image"; src: string; city: string }
-  | { type: "post"; postId: "campo-cidade" | "assembleia" | "metalurgicos" | "pre-candidato" | "francisco" | "indios" };
+  | { type: "post"; postId: "campo-cidade" | "assembleia" | "metalurgicos" | "pre-candidato" | "francisco" | "indios" | "sindicato-araquari" | "trabalhador-defende" };
 
 type LutaCard = {
   city: string;
@@ -179,7 +197,25 @@ const indiosCard: LutaCard = {
     "Espaço cultural Jacatirão em Joinville — celebrando a cultura e resistência dos povos originários.",
 };
 
-type FeaturedCard = LutaCard & { postId: "campo-cidade" | "assembleia" | "metalurgicos" | "pre-candidato" | "francisco" | "indios"; label: string; subtitle: string };
+const sindicatoAraquariCard: LutaCard = {
+  city: "Araquari",
+  image: sindicatoAraquariImg,
+  eyebrow: "Movimento sindical",
+  title: "Rodolfo visita direção do Sindicato dos Metalúrgicos de Araquari",
+  description:
+    "Fortalecendo o diálogo entre entidades e a unidade do movimento sindical.",
+};
+
+const trabalhadorDefendeCard: LutaCard = {
+  city: "Santa Catarina",
+  image: trabalhadorDefendeCover,
+  eyebrow: "Mobilização",
+  title: "Rodolfo de Ramos participa de mobilização em defesa dos trabalhadores",
+  description:
+    "Reforçando o compromisso com a defesa dos direitos da classe trabalhadora.",
+};
+
+type FeaturedCard = LutaCard & { postId: "campo-cidade" | "assembleia" | "metalurgicos" | "pre-candidato" | "francisco" | "indios" | "sindicato-araquari" | "trabalhador-defende"; label: string; subtitle: string };
 
 const featuredCards: FeaturedCard[] = [
   {
@@ -217,6 +253,18 @@ const featuredCards: FeaturedCard[] = [
     postId: "indios",
     label: "Esse é com os índios",
     subtitle: "Espaço cultural Jacatirão em Joinville. Clique para ver mais.",
+  },
+  {
+    ...sindicatoAraquariCard,
+    postId: "sindicato-araquari",
+    label: "Rodolfo visita direção do Sindicato dos Metalúrgicos de Araquari e fortalece diálogo entre entidades",
+    subtitle: "Fortalecendo a unidade do movimento sindical. Clique para ver mais.",
+  },
+  {
+    ...trabalhadorDefendeCard,
+    postId: "trabalhador-defende",
+    label: "Rodolfo de Ramos participa de mobilização em defesa dos trabalhadores",
+    subtitle: "Mobilização em defesa dos direitos da classe trabalhadora. Clique para ver mais.",
   },
 ];
 
@@ -386,6 +434,10 @@ export function JuntosNaLuta() {
                   <FranciscoPostModal onClose={() => setModalContent(null)} />
                 ) : modalContent.type === "post" && modalContent.postId === "indios" ? (
                   <IndiosPostModal onClose={() => setModalContent(null)} />
+                ) : modalContent.type === "post" && modalContent.postId === "sindicato-araquari" ? (
+                  <SindicatoAraquariPostModal onClose={() => setModalContent(null)} />
+                ) : modalContent.type === "post" && modalContent.postId === "trabalhador-defende" ? (
+                  <TrabalhadorDefendePostModal onClose={() => setModalContent(null)} />
                 ) : modalContent.type === "image" ? (
                   <ImageModal
                     modal={modalContent}
@@ -473,7 +525,7 @@ function PostModal({ onClose }: { onClose: () => void }) {
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.96, y: 18 }}
       transition={{ type: "spring", damping: 25, stiffness: 260 }}
-      className="relative max-h-[90vh] w-full max-w-3xl overflow-hidden rounded-[1.5rem] bg-white text-foreground shadow-2xl"
+      className="relative flex max-h-[90vh] w-full max-w-3xl flex-col overflow-clip rounded-[1.5rem] bg-white text-foreground shadow-2xl"
     >
       {/* Sticky header */}
       <div className="sticky top-0 z-20 flex items-start justify-between gap-4 border-b border-foreground/10 bg-white/95 px-5 py-4 backdrop-blur md:px-7">
@@ -496,7 +548,7 @@ function PostModal({ onClose }: { onClose: () => void }) {
       </div>
 
       {/* Scrollable body */}
-      <div className="max-h-[calc(90vh-88px)] overflow-y-auto p-5 md:p-7">
+      <div className="flex-1 overflow-y-auto p-5 pb-10 md:p-7 md:pb-12">
         {/* Image carousel */}
         <div className="relative overflow-hidden rounded-2xl bg-black">
           <div ref={postEmblaRef} className="overflow-hidden">
@@ -589,7 +641,7 @@ function AssembleiaPostModal({ onClose }: { onClose: () => void }) {
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.96, y: 18 }}
       transition={{ type: "spring" as const, damping: 25, stiffness: 260 }}
-      className="relative max-h-[90vh] w-full max-w-3xl overflow-hidden rounded-[1.5rem] bg-white text-foreground shadow-2xl"
+      className="relative flex max-h-[90vh] w-full max-w-3xl flex-col overflow-clip rounded-[1.5rem] bg-white text-foreground shadow-2xl"
     >
       {/* Sticky header */}
       <div className="sticky top-0 z-20 flex items-start justify-between gap-4 border-b border-foreground/10 bg-white/95 px-5 py-4 backdrop-blur md:px-7">
@@ -612,7 +664,7 @@ function AssembleiaPostModal({ onClose }: { onClose: () => void }) {
       </div>
 
       {/* Scrollable body */}
-      <div className="max-h-[calc(90vh-88px)] overflow-y-auto p-5 md:p-7">
+      <div className="flex-1 overflow-y-auto p-5 pb-10 md:p-7 md:pb-12">
         {/* Image carousel */}
         <div className="relative overflow-hidden rounded-2xl bg-black">
           <div ref={emblaRef} className="overflow-hidden">
@@ -696,7 +748,7 @@ function MetalurgicosPostModal({ onClose }: { onClose: () => void }) {
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.96, y: 18 }}
       transition={{ type: "spring" as const, damping: 25, stiffness: 260 }}
-      className="relative max-h-[90vh] w-full max-w-3xl overflow-hidden rounded-[1.5rem] bg-white text-foreground shadow-2xl"
+      className="relative flex max-h-[90vh] w-full max-w-3xl flex-col overflow-clip rounded-[1.5rem] bg-white text-foreground shadow-2xl"
     >
       {/* Sticky header */}
       <div className="sticky top-0 z-20 flex items-start justify-between gap-4 border-b border-foreground/10 bg-white/95 px-5 py-4 backdrop-blur md:px-7">
@@ -719,7 +771,7 @@ function MetalurgicosPostModal({ onClose }: { onClose: () => void }) {
       </div>
 
       {/* Scrollable body */}
-      <div className="max-h-[calc(90vh-88px)] overflow-y-auto p-5 pb-8 md:p-7 md:pb-10">
+      <div className="flex-1 overflow-y-auto p-5 pb-10 md:p-7 md:pb-12">
         {/* Image carousel */}
         <div className="relative overflow-hidden rounded-2xl bg-black">
           <div ref={emblaRef} className="overflow-hidden">
@@ -803,7 +855,7 @@ function PreCandidatoPostModal({ onClose }: { onClose: () => void }) {
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.96, y: 18 }}
       transition={{ type: "spring" as const, damping: 25, stiffness: 260 }}
-      className="relative max-h-[90vh] w-full max-w-3xl overflow-hidden rounded-[1.5rem] bg-white text-foreground shadow-2xl"
+      className="relative flex max-h-[90vh] w-full max-w-3xl flex-col overflow-clip rounded-[1.5rem] bg-white text-foreground shadow-2xl"
     >
       {/* Sticky header */}
       <div className="sticky top-0 z-20 flex items-start justify-between gap-4 border-b border-foreground/10 bg-white/95 px-5 py-4 backdrop-blur md:px-7">
@@ -826,7 +878,7 @@ function PreCandidatoPostModal({ onClose }: { onClose: () => void }) {
       </div>
 
       {/* Scrollable body */}
-      <div className="max-h-[calc(90vh-88px)] overflow-y-auto p-5 pb-8 md:p-7 md:pb-10">
+      <div className="flex-1 overflow-y-auto p-5 pb-10 md:p-7 md:pb-12">
         {/* Image carousel */}
         <div className="relative overflow-hidden rounded-2xl bg-black">
           <div ref={emblaRef} className="overflow-hidden">
@@ -913,7 +965,7 @@ function FranciscoPostModal({ onClose }: { onClose: () => void }) {
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.96, y: 18 }}
       transition={{ type: "spring" as const, damping: 25, stiffness: 260 }}
-      className="relative max-h-[90vh] w-full max-w-3xl overflow-hidden rounded-[1.5rem] bg-white text-foreground shadow-2xl"
+      className="relative flex max-h-[90vh] w-full max-w-3xl flex-col overflow-clip rounded-[1.5rem] bg-white text-foreground shadow-2xl"
     >
       {/* Sticky header */}
       <div className="sticky top-0 z-20 flex items-start justify-between gap-4 border-b border-foreground/10 bg-white/95 px-5 py-4 backdrop-blur md:px-7">
@@ -936,7 +988,7 @@ function FranciscoPostModal({ onClose }: { onClose: () => void }) {
       </div>
 
       {/* Scrollable body */}
-      <div className="max-h-[calc(90vh-88px)] overflow-y-auto p-5 pb-8 md:p-7 md:pb-10">
+      <div className="flex-1 overflow-y-auto p-5 pb-10 md:p-7 md:pb-12">
         {/* Image carousel */}
         <div className="relative overflow-hidden rounded-2xl bg-black">
           <div ref={emblaRef} className="overflow-hidden">
@@ -1024,7 +1076,7 @@ function IndiosPostModal({ onClose }: { onClose: () => void }) {
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.96, y: 18 }}
       transition={{ type: "spring" as const, damping: 25, stiffness: 260 }}
-      className="relative max-h-[90vh] w-full max-w-3xl overflow-hidden rounded-[1.5rem] bg-white text-foreground shadow-2xl"
+      className="relative flex max-h-[90vh] w-full max-w-3xl flex-col overflow-clip rounded-[1.5rem] bg-white text-foreground shadow-2xl"
     >
       {/* Sticky header */}
       <div className="sticky top-0 z-20 flex items-start justify-between gap-4 border-b border-foreground/10 bg-white/95 px-5 py-4 backdrop-blur md:px-7">
@@ -1050,7 +1102,7 @@ function IndiosPostModal({ onClose }: { onClose: () => void }) {
       </div>
 
       {/* Scrollable body */}
-      <div className="max-h-[calc(90vh-88px)] overflow-y-auto p-5 pb-8 md:p-7 md:pb-10">
+      <div className="flex-1 overflow-y-auto p-5 pb-10 md:p-7 md:pb-12">
         {/* Media carousel (images + video) */}
         <div className="relative overflow-hidden rounded-2xl bg-black">
           <div ref={emblaRef} className="overflow-hidden">
@@ -1120,6 +1172,226 @@ function IndiosPostModal({ onClose }: { onClose: () => void }) {
           <p className="font-semibold text-[var(--pt-red)]">
             #PovosOriginários #CulturaIndígena #Joinville #Jacatirão
             #RodolfoDeRamos #DeputadoEstadual
+          </p>
+        </div>
+      </div>
+    </motion.article>
+  );
+}
+
+/* ── Sindicato Araquari Post Modal ──────────────────────────── */
+
+function SindicatoAraquariPostModal({ onClose }: { onClose: () => void }) {
+  return (
+    <motion.article
+      initial={{ opacity: 0, scale: 0.96, y: 18 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.96, y: 18 }}
+      transition={{ type: "spring" as const, damping: 25, stiffness: 260 }}
+      className="relative flex max-h-[90vh] w-full max-w-3xl flex-col overflow-clip rounded-[1.5rem] bg-white text-foreground shadow-2xl"
+    >
+      {/* Sticky header */}
+      <div className="sticky top-0 z-20 flex items-start justify-between gap-4 border-b border-foreground/10 bg-white/95 px-5 py-4 backdrop-blur md:px-7">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-widest text-[var(--sc-green)]">
+            Araquari, SC
+          </p>
+          <h3 className="mt-1 font-display text-xl leading-tight text-[var(--pt-red)] sm:text-2xl md:text-3xl">
+            Rodolfo visita direção do Sindicato dos Metalúrgicos de Araquari e fortalece diálogo entre entidades
+          </h3>
+        </div>
+        <button
+          type="button"
+          onClick={onClose}
+          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-foreground/5 text-foreground/70 transition hover:bg-foreground/10 hover:text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--pt-red)]"
+          aria-label="Fechar post"
+        >
+          <X className="h-5 w-5" />
+        </button>
+      </div>
+
+      {/* Scrollable body */}
+      <div className="flex-1 overflow-y-auto p-5 pb-10 md:p-7 md:pb-12">
+        {/* Single image */}
+        <div className="overflow-hidden rounded-2xl bg-black">
+          <img
+            src={sindicatoAraquariImg}
+            alt="Rodolfo visita Sindicato dos Metalúrgicos de Araquari"
+            className="w-full max-h-[60vh] object-contain"
+            draggable={false}
+          />
+        </div>
+
+        {/* Post body */}
+        <div className="mt-6 space-y-4 text-sm leading-relaxed text-foreground/78 md:text-base">
+          <p className="font-semibold text-foreground">
+            Rodolfo visita direção do Sindicato dos Metalúrgicos de Araquari e fortalece diálogo entre entidades
+          </p>
+          <p>
+            O dirigente sindical Rodolfo realizou uma visita à direção do
+            Sindicato dos Metalúrgicos de Araquari para dialogar sobre os
+            desafios enfrentados pela categoria e fortalecer a unidade do
+            movimento sindical.
+          </p>
+          <p>
+            Durante o encontro, foram debatidos temas de interesse dos
+            trabalhadores, como a valorização dos salários, a defesa dos
+            direitos trabalhistas, a redução da jornada de trabalho sem
+            redução salarial, o combate à escala 6x1 e a importância da
+            organização sindical para enfrentar os desafios atuais do mundo
+            do trabalho.
+          </p>
+          <p>
+            A visita também serviu para estreitar os laços entre as
+            entidades sindicais, promover a troca de experiências e
+            reforçar o compromisso conjunto na defesa dos direitos dos
+            metalúrgicos e da classe trabalhadora.
+          </p>
+          <p className="font-semibold text-[var(--pt-red)]">
+            #Metalúrgicos #Araquari #MovimentoSindical #RodolfoDeRamos
+            #DireitosTrabalhistas #ClasseTrabalhadora
+          </p>
+        </div>
+      </div>
+    </motion.article>
+  );
+}
+
+/* ── Trabalhador Defende Post Modal ──────────────────────── */
+
+function TrabalhadorDefendePostModal({ onClose }: { onClose: () => void }) {
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: true,
+    align: "center",
+  });
+
+  const mediaItems: { type: "image" | "video"; src: string }[] = [
+    ...trabalhadorDefendeImages.map((src) => ({ type: "image" as const, src })),
+    { type: "video", src: trabalhadorDefendeVideo },
+  ];
+
+  return (
+    <motion.article
+      initial={{ opacity: 0, scale: 0.96, y: 18 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.96, y: 18 }}
+      transition={{ type: "spring" as const, damping: 25, stiffness: 260 }}
+      className="relative flex max-h-[90vh] w-full max-w-3xl flex-col overflow-clip rounded-[1.5rem] bg-white text-foreground shadow-2xl"
+    >
+      {/* Sticky header */}
+      <div className="sticky top-0 z-20 flex shrink-0 items-start justify-between gap-4 border-b border-foreground/10 bg-white/95 px-5 py-4 backdrop-blur md:px-7">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-widest text-[var(--sc-green)]">
+            Santa Catarina
+          </p>
+          <h3 className="mt-1 font-display text-xl leading-tight text-[var(--pt-red)] sm:text-2xl md:text-3xl">
+            Rodolfo de Ramos participa de mobilização em defesa dos trabalhadores
+          </h3>
+        </div>
+        <button
+          type="button"
+          onClick={onClose}
+          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-foreground/5 text-foreground/70 transition hover:bg-foreground/10 hover:text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--pt-red)]"
+          aria-label="Fechar post"
+        >
+          <X className="h-5 w-5" />
+        </button>
+      </div>
+
+      {/* Scrollable body */}
+      <div className="flex-1 overflow-y-auto p-5 pb-10 md:p-7 md:pb-12">
+        {/* Media carousel (images + video) */}
+        <div className="relative overflow-hidden rounded-2xl bg-black">
+          <div ref={emblaRef} className="overflow-hidden">
+            <div className="flex">
+              {mediaItems.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex min-w-0 shrink-0 grow-0 basis-full items-center justify-center h-[60vh]"
+                >
+                  {item.type === "image" ? (
+                    <img
+                      src={item.src}
+                      alt={`Mobilização em defesa dos trabalhadores - Foto ${index + 1}`}
+                      className="w-full max-h-[60vh] object-contain"
+                      draggable={false}
+                    />
+                  ) : (
+                    <video
+                      src={item.src}
+                      controls
+                      playsInline
+                      preload="metadata"
+                      className="w-full max-h-[60vh] object-contain"
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => emblaApi?.scrollPrev()}
+            className="absolute left-3 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white transition hover:bg-black/75 focus:outline-none focus:ring-2 focus:ring-white"
+            aria-label="Imagem anterior"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => emblaApi?.scrollNext()}
+            className="absolute right-3 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white transition hover:bg-black/75 focus:outline-none focus:ring-2 focus:ring-white"
+            aria-label="Proxima imagem"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Post body */}
+        <div className="mt-6 space-y-4 text-sm leading-relaxed text-foreground/78 md:text-base">
+          <p className="font-semibold text-foreground">
+            Rodolfo de Ramos participa de mobilização em defesa dos trabalhadores
+          </p>
+          <p>
+            Rodolfo de Ramos esteve presente em um ato de mobilização
+            realizado por trabalhadores e entidades sindicais em Santa
+            Catarina, reforçando seu compromisso com a defesa dos direitos
+            da classe trabalhadora.
+          </p>
+          <p>
+            A atividade reuniu representantes de diversas categorias, que
+            manifestaram preocupação com propostas que possam resultar na
+            redução de direitos e benefícios conquistados ao longo dos
+            anos. Durante o encontro, os participantes destacaram a
+            importância da união dos trabalhadores e da atuação dos
+            sindicatos na defesa de melhores condições de trabalho.
+          </p>
+          <p>
+            Rodolfo ressaltou que a participação dos trabalhadores nos
+            espaços de debate e mobilização é fundamental para fortalecer
+            as negociações e garantir avanços para as categorias
+            representadas.
+          </p>
+          <p className="italic text-foreground/90">
+            “A organização e a união dos trabalhadores são ferramentas
+            essenciais para a defesa dos direitos e para a construção de
+            condições de trabalho cada vez mais dignas”, destacou.
+          </p>
+          <p>
+            A mobilização reforçou a importância do diálogo entre
+            trabalhadores, sindicatos e empregadores, além de evidenciar o
+            papel das entidades sindicais na representação dos interesses
+            da classe trabalhadora.
+          </p>
+          <p>
+            Com sua presença no ato, Rodolfo de Ramos reafirmou seu apoio
+            às pautas dos trabalhadores e seu compromisso com a
+            valorização do movimento sindical e da luta por direitos.
+          </p>
+          <p className="font-semibold text-[var(--pt-red)]">
+            #Mobilização #Trabalhadores #MovimentoSindical #RodolfoDeRamos
+            #DireitosTrabalhistas #ClasseTrabalhadora #SantaCatarina
           </p>
         </div>
       </div>
