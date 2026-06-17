@@ -88,11 +88,29 @@ const trabalhadorDefendeImages = Object.entries(trabalhadorDefendeGlob)
   .sort((a, b) => a.num - b.num)
   .map((item) => item.src);
 
+/* Eagerly import rodolfo-reuni photos via glob + videos */
+import reuniCover from "@/assets/rodolfo-reuni (1).jpeg";
+import reuniVideo1 from "@/assets/rodolfo-reuni-video(1).mp4";
+import reuniVideo2 from "@/assets/rodolfo-reuni-video(2).mp4";
+import reuniVideo3 from "@/assets/rodolfo-reuni-video(3).mp4";
+const reuniGlob = import.meta.glob<{ default: string }>(
+  "@/assets/rodolfo-reuni *.jpeg",
+  { eager: true },
+);
+const reuniImages = Object.entries(reuniGlob)
+  .map(([path, mod]) => {
+    const num = parseInt(path.match(/\((\d+)\)/)?.[1] ?? "0", 10);
+    return { num, src: mod.default };
+  })
+  .filter((item) => item.num >= 2 && item.num <= 6)
+  .sort((a, b) => a.num - b.num)
+  .map((item) => item.src);
+
 /* ── Types ───────────────────────────────────────────────────────── */
 
 type ModalContent =
   | { type: "image"; src: string; city: string }
-  | { type: "post"; postId: "campo-cidade" | "assembleia" | "metalurgicos" | "pre-candidato" | "francisco" | "indios" | "sindicato-araquari" | "trabalhador-defende" };
+  | { type: "post"; postId: "campo-cidade" | "assembleia" | "metalurgicos" | "pre-candidato" | "francisco" | "indios" | "sindicato-araquari" | "trabalhador-defende" | "reuni-barra-sul" };
 
 type LutaCard = {
   city: string;
@@ -215,7 +233,16 @@ const trabalhadorDefendeCard: LutaCard = {
     "Reforçando o compromisso com a defesa dos direitos da classe trabalhadora.",
 };
 
-type FeaturedCard = LutaCard & { postId: "campo-cidade" | "assembleia" | "metalurgicos" | "pre-candidato" | "francisco" | "indios" | "sindicato-araquari" | "trabalhador-defende"; label: string; subtitle: string };
+const reuniBarraSulCard: LutaCard = {
+  city: "Barra do Sul",
+  image: reuniCover,
+  eyebrow: "Organização partidária",
+  title: "Rodolfo fortalece organização do PT em Barra do Sul",
+  description:
+    "Reunião com a direção do PT de Barra do Sul para fortalecer o partido no litoral catarinense.",
+};
+
+type FeaturedCard = LutaCard & { postId: "campo-cidade" | "assembleia" | "metalurgicos" | "pre-candidato" | "francisco" | "indios" | "sindicato-araquari" | "trabalhador-defende" | "reuni-barra-sul"; label: string; subtitle: string };
 
 const featuredCards: FeaturedCard[] = [
   {
@@ -265,6 +292,12 @@ const featuredCards: FeaturedCard[] = [
     postId: "trabalhador-defende",
     label: "Rodolfo de Ramos participa de mobilização em defesa dos trabalhadores",
     subtitle: "Mobilização em defesa dos direitos da classe trabalhadora. Clique para ver mais.",
+  },
+  {
+    ...reuniBarraSulCard,
+    postId: "reuni-barra-sul",
+    label: "Rodolfo fortalece organização do PT em Barra do Sul",
+    subtitle: "Reunião com a direção do PT no litoral catarinense. Clique para ver mais.",
   },
 ];
 
@@ -438,6 +471,8 @@ export function JuntosNaLuta() {
                   <SindicatoAraquariPostModal onClose={() => setModalContent(null)} />
                 ) : modalContent.type === "post" && modalContent.postId === "trabalhador-defende" ? (
                   <TrabalhadorDefendePostModal onClose={() => setModalContent(null)} />
+                ) : modalContent.type === "post" && modalContent.postId === "reuni-barra-sul" ? (
+                  <ReuniBarraSulPostModal onClose={() => setModalContent(null)} />
                 ) : modalContent.type === "image" ? (
                   <ImageModal
                     modal={modalContent}
@@ -1392,6 +1427,128 @@ function TrabalhadorDefendePostModal({ onClose }: { onClose: () => void }) {
           <p className="font-semibold text-[var(--pt-red)]">
             #Mobilização #Trabalhadores #MovimentoSindical #RodolfoDeRamos
             #DireitosTrabalhistas #ClasseTrabalhadora #SantaCatarina
+          </p>
+        </div>
+      </div>
+    </motion.article>
+  );
+}
+
+/* ── Reuni Barra do Sul Post Modal ───────────────────────── */
+
+function ReuniBarraSulPostModal({ onClose }: { onClose: () => void }) {
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: true,
+    align: "center",
+  });
+
+  const mediaItems: { type: "image" | "video"; src: string }[] = [
+    ...reuniImages.map((src) => ({ type: "image" as const, src })),
+    { type: "video", src: reuniVideo1 },
+    { type: "video", src: reuniVideo2 },
+    { type: "video", src: reuniVideo3 },
+  ];
+
+  return (
+    <motion.article
+      initial={{ opacity: 0, scale: 0.96, y: 18 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.96, y: 18 }}
+      transition={{ type: "spring" as const, damping: 25, stiffness: 260 }}
+      className="relative flex max-h-[90vh] w-full max-w-3xl flex-col overflow-clip rounded-[1.5rem] bg-white text-foreground shadow-2xl"
+    >
+      {/* Sticky header */}
+      <div className="sticky top-0 z-20 flex shrink-0 items-start justify-between gap-4 border-b border-foreground/10 bg-white/95 px-5 py-4 backdrop-blur md:px-7">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-widest text-[var(--sc-green)]">
+            Barra do Sul, SC
+          </p>
+          <h3 className="mt-1 font-display text-xl leading-tight text-[var(--pt-red)] sm:text-2xl md:text-3xl">
+            Rodolfo fortalece organização do PT em Barra do Sul
+          </h3>
+        </div>
+        <button
+          type="button"
+          onClick={onClose}
+          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-foreground/5 text-foreground/70 transition hover:bg-foreground/10 hover:text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--pt-red)]"
+          aria-label="Fechar post"
+        >
+          <X className="h-5 w-5" />
+        </button>
+      </div>
+
+      {/* Scrollable body */}
+      <div className="flex-1 overflow-y-auto p-5 pb-10 md:p-7 md:pb-12">
+        {/* Media carousel (images + videos) */}
+        <div className="relative overflow-hidden rounded-2xl bg-black">
+          <div ref={emblaRef} className="overflow-hidden">
+            <div className="flex">
+              {mediaItems.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex min-w-0 shrink-0 grow-0 basis-full items-center justify-center h-[60vh]"
+                >
+                  {item.type === "image" ? (
+                    <img
+                      src={item.src}
+                      alt={`Reunião PT Barra do Sul - Foto ${index + 1}`}
+                      className="w-full max-h-[60vh] object-contain"
+                      draggable={false}
+                    />
+                  ) : (
+                    <video
+                      src={item.src}
+                      controls
+                      playsInline
+                      preload="metadata"
+                      className="w-full max-h-[60vh] object-contain"
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => emblaApi?.scrollPrev()}
+            className="absolute left-3 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white transition hover:bg-black/75 focus:outline-none focus:ring-2 focus:ring-white"
+            aria-label="Imagem anterior"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => emblaApi?.scrollNext()}
+            className="absolute right-3 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white transition hover:bg-black/75 focus:outline-none focus:ring-2 focus:ring-white"
+            aria-label="Proxima imagem"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Post body */}
+        <div className="mt-6 space-y-4 text-sm leading-relaxed text-foreground/78 md:text-base">
+          <p className="font-semibold text-foreground">
+            Rodolfo fortalece organização do PT em Barra do Sul
+          </p>
+          <p>
+            Hoje o pré-candidato a deputado estadual Rodolfo de Ramos
+            esteve reunido com o vice-presidente Jordan e a
+            secretária-geral Roberta do PT de Barra do Sul, fortalecendo a
+            organização do partido e ampliando o time do presidente Lula no
+            litoral catarinense.
+          </p>
+          <p>
+            Seguimos construindo um projeto coletivo, com diálogo,
+            participação popular e compromisso com a classe trabalhadora,
+            para garantir mais desenvolvimento, direitos e oportunidades
+            para o povo de Santa Catarina. ✊🚩
+          </p>
+          <p className="font-semibold text-[var(--pt-red)]">
+            #RodolfoDeRamos #PT #Lula #SantaCatarina #BarraDoSul
+            #ClasseTrabalhadora #LitoralCatarinense #DeputadoEstadual
+            #UnidadePopular #TimeDoLula
           </p>
         </div>
       </div>
