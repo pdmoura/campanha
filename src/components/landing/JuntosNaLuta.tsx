@@ -106,11 +106,45 @@ const reuniImages = Object.entries(reuniGlob)
   .sort((a, b) => a.num - b.num)
   .map((item) => item.src);
 
+/* Eagerly import sintect photos via glob */
+import sintectCover from "@/assets/ SINTECT (9).jpeg";
+const sintectGlob = import.meta.glob<{ default: string }>(
+  "@/assets/ SINTECT *.jpeg",
+  { eager: true },
+);
+const sintectImages = Object.entries(sintectGlob)
+  .map(([path, mod]) => {
+    const num = parseInt(path.match(/\((\d+)\)/)?.[1] ?? "0", 10);
+    return { num, src: mod.default };
+  })
+  .filter((item) => item.num >= 1 && item.num <= 8)
+  .sort((a, b) => a.num - b.num)
+  .map((item) => item.src);
+
+/* Eagerly import trab corre sintec photos via glob */
+import trabCorreSintecCover from "@/assets/Trab_Corre_Sintec (1).jpeg";
+const trabCorreSintecGlob = import.meta.glob<{ default: string }>(
+  "@/assets/Trab_Corre_Sintec *.jpeg",
+  { eager: true },
+);
+const trabCorreSintecImages = Object.entries(trabCorreSintecGlob)
+  .map(([path, mod]) => {
+    const num = parseInt(path.match(/\((\d+)\)/)?.[1] ?? "0", 10);
+    return { num, src: mod.default };
+  })
+  .filter((item) => item.num >= 2 && item.num <= 16)
+  .sort((a, b) => a.num - b.num)
+  .map((item) => item.src);
+
+/* Eagerly import familia pelegrini photos */
+import familiaPelegriniCover from "@/assets/Familia-pelegrini (1).jpeg";
+import familiaPelegriniModalImg from "@/assets/Familia-pelegrini (2).jpeg";
+
 /* ── Types ───────────────────────────────────────────────────────── */
 
 type ModalContent =
   | { type: "image"; src: string; city: string }
-  | { type: "post"; postId: "campo-cidade" | "assembleia" | "metalurgicos" | "pre-candidato" | "francisco" | "indios" | "sindicato-araquari" | "trabalhador-defende" | "reuni-barra-sul" };
+  | { type: "post"; postId: "campo-cidade" | "assembleia" | "metalurgicos" | "pre-candidato" | "francisco" | "indios" | "sindicato-araquari" | "trabalhador-defende" | "reuni-barra-sul" | "sintect" | "trab-corre-sintec" | "familia-pelegrini" };
 
 type LutaCard = {
   city: string;
@@ -242,7 +276,31 @@ const reuniBarraSulCard: LutaCard = {
     "Reunião com a direção do PT de Barra do Sul para fortalecer o partido no litoral catarinense.",
 };
 
-type FeaturedCard = LutaCard & { postId: "campo-cidade" | "assembleia" | "metalurgicos" | "pre-candidato" | "francisco" | "indios" | "sindicato-araquari" | "trabalhador-defende" | "reuni-barra-sul"; label: string; subtitle: string };
+const sintectCard: LutaCard = {
+  city: "São José",
+  image: sintectCover,
+  eyebrow: "Mobilização",
+  title: "Grande mobilização contra os ataques da direção da ECT",
+  description: "O SINTECT/SC convida a companheiro para nossa grande mobilização.",
+};
+
+const trabCorreSintecCard: LutaCard = {
+  city: "São José",
+  image: trabCorreSintecCover,
+  eyebrow: "Apoio aos Trabalhadores",
+  title: "Ao lado dos trabalhadores dos Correios!",
+  description: "Rodolfo dos Metalúrgicos no Centro de Distribuição dos Correios em São José.",
+};
+
+const familiaPelegriniCard: LutaCard = {
+  city: "Santa Catarina",
+  image: familiaPelegriniCover,
+  eyebrow: "Diálogo com a comunidade",
+  title: "Rodolfo visita à família Pelegrini",
+  description: "Fortalecendo o diálogo e a proximidade com a comunidade para a construção de um projeto coletivo.",
+};
+
+type FeaturedCard = LutaCard & { postId: "campo-cidade" | "assembleia" | "metalurgicos" | "pre-candidato" | "francisco" | "indios" | "sindicato-araquari" | "trabalhador-defende" | "reuni-barra-sul" | "sintect" | "trab-corre-sintec" | "familia-pelegrini"; label: string; subtitle: string };
 
 const featuredCards: FeaturedCard[] = [
   {
@@ -298,6 +356,24 @@ const featuredCards: FeaturedCard[] = [
     postId: "reuni-barra-sul",
     label: "Rodolfo fortalece organização do PT em Barra do Sul",
     subtitle: "Reunião com a direção do PT no litoral catarinense. Clique para ver mais.",
+  },
+  {
+    ...sintectCard,
+    postId: "sintect",
+    label: "Grande mobilização contra os ataques da direção da ECT",
+    subtitle: "Apoio à mobilização do SINTECT/SC. Clique para ver mais.",
+  },
+  {
+    ...trabCorreSintecCard,
+    postId: "trab-corre-sintec",
+    label: "Ao lado dos trabalhadores dos Correios!",
+    subtitle: "Apoio aos trabalhadores do Centro de Distribuição dos Correios. Clique para ver mais.",
+  },
+  {
+    ...familiaPelegriniCard,
+    postId: "familia-pelegrini",
+    label: "Rodolfo visita à família Pelegrini",
+    subtitle: "Fortalecendo o diálogo com a comunidade. Clique para ver mais.",
   },
 ];
 
@@ -473,6 +549,12 @@ export function JuntosNaLuta() {
                   <TrabalhadorDefendePostModal onClose={() => setModalContent(null)} />
                 ) : modalContent.type === "post" && modalContent.postId === "reuni-barra-sul" ? (
                   <ReuniBarraSulPostModal onClose={() => setModalContent(null)} />
+                ) : modalContent.type === "post" && modalContent.postId === "sintect" ? (
+                  <SintectPostModal onClose={() => setModalContent(null)} />
+                ) : modalContent.type === "post" && modalContent.postId === "trab-corre-sintec" ? (
+                  <TrabCorreSintecPostModal onClose={() => setModalContent(null)} />
+                ) : modalContent.type === "post" && modalContent.postId === "familia-pelegrini" ? (
+                  <FamiliaPelegriniPostModal onClose={() => setModalContent(null)} />
                 ) : modalContent.type === "image" ? (
                   <ImageModal
                     modal={modalContent}
@@ -1549,6 +1631,291 @@ function ReuniBarraSulPostModal({ onClose }: { onClose: () => void }) {
             #RodolfoDeRamos #PT #Lula #SantaCatarina #BarraDoSul
             #ClasseTrabalhadora #LitoralCatarinense #DeputadoEstadual
             #UnidadePopular #TimeDoLula
+          </p>
+        </div>
+      </div>
+    </motion.article>
+  );
+}
+
+/* ── Sintect Post Modal ───────────────────────── */
+
+function SintectPostModal({ onClose }: { onClose: () => void }) {
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: true,
+    align: "center",
+  });
+
+  return (
+    <motion.article
+      initial={{ opacity: 0, scale: 0.96, y: 18 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.96, y: 18 }}
+      transition={{ type: "spring" as const, damping: 25, stiffness: 260 }}
+      className="relative flex max-h-[90vh] w-full max-w-3xl flex-col overflow-clip rounded-[1.5rem] bg-white text-foreground shadow-2xl"
+    >
+      {/* Sticky header */}
+      <div className="sticky top-0 z-20 flex shrink-0 items-start justify-between gap-4 border-b border-foreground/10 bg-white/95 px-5 py-4 backdrop-blur md:px-7">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-widest text-[var(--sc-green)]">
+            São José, SC
+          </p>
+          <h3 className="mt-1 font-display text-xl leading-tight text-[var(--pt-red)] sm:text-2xl md:text-3xl">
+            Grande mobilização contra os ataques da direção da ECT
+          </h3>
+        </div>
+        <button
+          type="button"
+          onClick={onClose}
+          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-foreground/5 text-foreground/70 transition hover:bg-foreground/10 hover:text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--pt-red)]"
+          aria-label="Fechar post"
+        >
+          <X className="h-5 w-5" />
+        </button>
+      </div>
+
+      {/* Scrollable body */}
+      <div className="flex-1 overflow-y-auto p-5 pb-10 md:p-7 md:pb-12">
+        {/* Media carousel */}
+        <div className="relative overflow-hidden rounded-2xl bg-black">
+          <div ref={emblaRef} className="overflow-hidden">
+            <div className="flex">
+              {sintectImages.map((src, index) => (
+                <div
+                  key={index}
+                  className="flex min-w-0 shrink-0 grow-0 basis-full items-center justify-center h-[60vh]"
+                >
+                  <img
+                    src={src}
+                    alt={`Mobilização SINTECT/SC - Foto ${index + 1}`}
+                    className="w-full max-h-[60vh] object-contain"
+                    draggable={false}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => emblaApi?.scrollPrev()}
+            className="absolute left-3 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white transition hover:bg-black/75 focus:outline-none focus:ring-2 focus:ring-white"
+            aria-label="Imagem anterior"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => emblaApi?.scrollNext()}
+            className="absolute right-3 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white transition hover:bg-black/75 focus:outline-none focus:ring-2 focus:ring-white"
+            aria-label="Proxima imagem"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Post body */}
+        <div className="mt-6 space-y-4 text-sm leading-relaxed text-foreground/78 md:text-base">
+          <p className="font-semibold text-foreground">
+            Companheiro.!
+          </p>
+          <p>
+            O SINTECT/SC convida a companheiro para nossa grande
+            mobilização contra os ataques da direção da ECT e a retirada
+            de direitos da categoria ecetista.
+          </p>
+          <p>
+            <strong>📅 Data:</strong> 19 de junho<br />
+            <strong>⏰ Horário:</strong> Das 7h às 17h<br />
+            <strong>📍 Local:</strong> Em frente ao Complexo Operacional Administrativo dos Correios<br />
+            <strong>🏠 Endereço:</strong> Rua Romeu José Vieira, nº 90, Bloco B, Bairro Nossa Senhora do Rosário – São José/SC
+          </p>
+          <p>
+            Sua presença e apoio são fundamentais para fortalecer a defesa
+            da empresa pública, dos empregos e da nossa classe
+            trabalhadora. Confirmar participação até 18/06/2026 -
+            Quinta-feira.
+          </p>
+          <p>
+            Contamos com você.
+          </p>
+          <p>
+            Abs e até a vitória.✊🏿
+          </p>
+        </div>
+      </div>
+    </motion.article>
+  );
+}
+
+/* ── Trab Corre Sintec Post Modal ───────────────────────── */
+
+function TrabCorreSintecPostModal({ onClose }: { onClose: () => void }) {
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: true,
+    align: "center",
+  });
+
+  return (
+    <motion.article
+      initial={{ opacity: 0, scale: 0.96, y: 18 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.96, y: 18 }}
+      transition={{ type: "spring" as const, damping: 25, stiffness: 260 }}
+      className="relative flex max-h-[90vh] w-full max-w-3xl flex-col overflow-clip rounded-[1.5rem] bg-white text-foreground shadow-2xl"
+    >
+      {/* Sticky header */}
+      <div className="sticky top-0 z-20 flex shrink-0 items-start justify-between gap-4 border-b border-foreground/10 bg-white/95 px-5 py-4 backdrop-blur md:px-7">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-widest text-[var(--sc-green)]">
+            São José, SC
+          </p>
+          <h3 className="mt-1 font-display text-xl leading-tight text-[var(--pt-red)] sm:text-2xl md:text-3xl">
+            Ao lado dos trabalhadores dos Correios!
+          </h3>
+        </div>
+        <button
+          type="button"
+          onClick={onClose}
+          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-foreground/5 text-foreground/70 transition hover:bg-foreground/10 hover:text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--pt-red)]"
+          aria-label="Fechar post"
+        >
+          <X className="h-5 w-5" />
+        </button>
+      </div>
+
+      {/* Scrollable body */}
+      <div className="flex-1 overflow-y-auto p-5 pb-10 md:p-7 md:pb-12">
+        {/* Media carousel */}
+        <div className="relative overflow-hidden rounded-2xl bg-black">
+          <div ref={emblaRef} className="overflow-hidden">
+            <div className="flex">
+              {trabCorreSintecImages.map((src, index) => (
+                <div
+                  key={index}
+                  className="flex min-w-0 shrink-0 grow-0 basis-full items-center justify-center h-[60vh]"
+                >
+                  <img
+                    src={src}
+                    alt={`Apoio aos Trabalhadores dos Correios - Foto ${index + 1}`}
+                    className="w-full max-h-[60vh] object-contain"
+                    draggable={false}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => emblaApi?.scrollPrev()}
+            className="absolute left-3 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white transition hover:bg-black/75 focus:outline-none focus:ring-2 focus:ring-white"
+            aria-label="Imagem anterior"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => emblaApi?.scrollNext()}
+            className="absolute right-3 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-black/55 text-white transition hover:bg-black/75 focus:outline-none focus:ring-2 focus:ring-white"
+            aria-label="Proxima imagem"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Post body */}
+        <div className="mt-6 space-y-4 text-sm leading-relaxed text-foreground/78 md:text-base">
+          <p className="font-semibold text-foreground">
+            📢 Ao lado dos trabalhadores dos Correios!
+          </p>
+          <p>
+            O pré-candidato a deputado estadual Rodolfo dos Metalúrgicos
+            esteve presente na atividade promovida pelo SINTECT, em São
+            José, no Centro de Distribuição dos Correios de Santa Catarina.
+          </p>
+          <p>
+            Na ocasião, manifestou seu apoio aos trabalhadores e
+            trabalhadoras dos Correios, denunciando os abusos de poder
+            praticados por chefias, os casos de assédio moral no ambiente
+            de trabalho e os impactos da reestruturação desordenada que
+            vem prejudicando tanto os empregados quanto a qualidade dos
+            serviços prestados à população.
+          </p>
+          <p>
+            ✊ Defender os direitos dos trabalhadores é defender um
+            serviço público de qualidade, com respeito, dignidade e
+            valorização de quem faz o Brasil acontecer todos os dias.
+          </p>
+          <p className="font-semibold text-[var(--pt-red)]">
+            #RodolfoDosMetalúrgicos #TrabalhadoresDosCorreios #SINTECT #DireitosDosTrabalhadores #SantaCatarina #LutaSindical #ServiçoPúblicoDeQualidade
+          </p>
+        </div>
+      </div>
+    </motion.article>
+  );
+}
+
+/* ── Familia Pelegrini Post Modal ───────────────────────── */
+
+function FamiliaPelegriniPostModal({ onClose }: { onClose: () => void }) {
+  return (
+    <motion.article
+      initial={{ opacity: 0, scale: 0.96, y: 18 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.96, y: 18 }}
+      transition={{ type: "spring" as const, damping: 25, stiffness: 260 }}
+      className="relative flex max-h-[90vh] w-full max-w-3xl flex-col overflow-clip rounded-[1.5rem] bg-white text-foreground shadow-2xl"
+    >
+      {/* Sticky header */}
+      <div className="sticky top-0 z-20 flex shrink-0 items-start justify-between gap-4 border-b border-foreground/10 bg-white/95 px-5 py-4 backdrop-blur md:px-7">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-widest text-[var(--sc-green)]">
+            Santa Catarina
+          </p>
+          <h3 className="mt-1 font-display text-xl leading-tight text-[var(--pt-red)] sm:text-2xl md:text-3xl">
+            Rodolfo visita à família Pelegrini
+          </h3>
+        </div>
+        <button
+          type="button"
+          onClick={onClose}
+          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-foreground/5 text-foreground/70 transition hover:bg-foreground/10 hover:text-foreground focus:outline-none focus:ring-2 focus:ring-[var(--pt-red)]"
+          aria-label="Fechar post"
+        >
+          <X className="h-5 w-5" />
+        </button>
+      </div>
+
+      {/* Scrollable body */}
+      <div className="flex-1 overflow-y-auto p-5 pb-10 md:p-7 md:pb-12">
+        <div className="relative overflow-hidden rounded-2xl bg-black">
+          <div className="flex min-w-0 shrink-0 grow-0 basis-full items-center justify-center h-[60vh]">
+            <img
+              src={familiaPelegriniModalImg}
+              alt="Visita à família Pelegrini"
+              className="w-full max-h-[60vh] object-contain"
+              draggable={false}
+            />
+          </div>
+        </div>
+
+        {/* Post body */}
+        <div className="mt-6 space-y-4 text-sm leading-relaxed text-foreground/78 md:text-base">
+          <p>
+            No dia 28 de junho, o pré-candidato Rodolfo realizou uma visita à
+            família Pelegrini, fortalecendo o diálogo e a proximidade com a
+            comunidade.
+          </p>
+          <p>
+            O encontro foi marcado por uma conversa produtiva, na qual foram
+            ouvidas ideias, demandas e sugestões importantes para a construção de um
+            projeto comprometido com o desenvolvimento do município.
+          </p>
+          <p>
+            Agradecemos à família Pelegrini pela receptividade e pelo carinho.
+            Seguimos caminhando juntos, valorizando a escuta, o respeito e a
+            participação de cada cidadão.
           </p>
         </div>
       </div>
